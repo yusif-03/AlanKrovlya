@@ -6,8 +6,8 @@ export default async function handler(req, res) {
 
   const { name, phone, service, message } = req.body;
 
-  const token = 'твой_telegram_bot_token';
-  const chat_id = 'твой_chat_id';
+  const token = '7958576790:AAG5ldEUA5l2_h7dKlm1maM1eXtaSLW9MLE';
+  const chat_id = '8042773428';
 
   const text = `
 🚨 Новая заявка с сайта:
