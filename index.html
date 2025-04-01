@@ -1487,5 +1487,32 @@
         });
       });
     </script>
+    <script>
+  document.getElementById('costCalculatorForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Создание объекта с данными формы
+    const formData = new FormData(this);
+
+    // Отправка данных на сервер (Vercel API)
+    fetch('/api/form', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'Data sent to Telegram') {
+        alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+      } else {
+        alert('Произошла ошибка при отправке данных.');
+      }
+    })
+    .catch(error => {
+      console.error('Ошибка:', error);
+      alert('Произошла ошибка при отправке данных.');
+    });
+  });
+</script>
+
   </body>
 </html>
