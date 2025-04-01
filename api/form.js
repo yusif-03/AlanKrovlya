@@ -2,16 +2,14 @@ import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
     console.log("Request received:", req.method);
+    console.log("Request body:", req.body);  // Логирование тела запроса
 
-    // Проверка на разрешённый метод
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Логирование тела запроса
-    console.log("Request body:", req.body);
-
     const { name, phone, service, message } = req.body || {};
+
     if (!name || !phone || !service) {
         return res.status(400).json({ error: "Missing required fields" });
     }
