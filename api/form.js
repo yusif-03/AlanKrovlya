@@ -1,49 +1,14 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { name, phone, service, message } = req.body;
-
-  const token = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
-  const chat_id = '7373169686';
-
-  const text = `
-📥 Новая заявка с сайта:
-👤 Имя: ${name}
-📞 Телефон: ${phone}
-🛠 Услуга: ${service}
-📩 Комментарий: ${message || '-'}
-  `;
-
-  try {
-    const telegramURL = `https://api.telegram.org/bot${token}/sendMessage`;
-    const response = await fetch(telegramURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id, text }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return res.status(500).json({ error: 'Telegram error', details: error });
-    }
-
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    return res.status(500).json({ error: 'Request failed', details: error.message });
-  }
-}
 const express = require("express");
 const fetch = require("node-fetch");
 
 const app = express();
 app.use(express.json());
 
-// Your Telegram Bot API Token and Chat ID
+// Токен бота и ID чата
 const TELEGRAM_BOT_TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
 const CHAT_ID = '7373169686';
 
+// Обработчик POST-запросов
 app.post("/api/form", async (req, res) => {
   const { name, phone, service, message, roofType, roofArea, roofComplexity, type } = req.body;
 
@@ -80,6 +45,7 @@ app.post("/api/form", async (req, res) => {
       })
     });
 
+    // Проверка успешной отправки
     if (telegramResponse.ok) {
       res.status(200).json({ message: "Заявка успешно отправлена в Telegram" });
     } else {
@@ -91,6 +57,7 @@ app.post("/api/form", async (req, res) => {
   }
 });
 
+// Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Сервер работает на порту ${PORT}`);
