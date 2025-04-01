@@ -1,49 +1,40 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
-export default async function handler(req, res) {
-    console.log("Request received:", req.method);
-    console.log("Request body:", req.body);  // Логирование тела запроса
+module.exports = async (req, res) => {
+  if (req.method === 'POST') {
+    const { name, phone, roofType, roofArea, roofComplexity } = req.body;
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    const message = `
+      Новый запрос:
+      Имя: ${name}
+      Телефон: ${phone}
+      Тип кровли: ${roofType}
+      Площадь кровли: ${roofArea}
+      Сложность кровли: ${roofComplexity}
+    `;
 
-    const { name, phone, roofType, roofArea, service, message } = req.body || {};
+    const telegramToken = 'ТВОЙ_ТЕЛЕГРАМ_ТОКЕН';  // Заменить на токен бота
+    const chatId = 'ТВОЙ_CHAT_ID';  // Заменить на ID чата
 
-    if (!name || !phone || !roofType || !roofArea || !service) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
-    const CHAT_ID = '7373169686';
-
-    const text = `
-📞 New Callback Request:
-👤 Name: ${name}
-📱 Phone: ${phone}
-🕒 Best Time to Call: ${service}
-📩 Message: ${message || '-'}
-`;
+    const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
 
     try {
-        console.log("Sending request to Telegram...");
+      await fetch(telegramUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'HTML',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-        const telegramURL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-        const response = await fetch(telegramURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text }),
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            console.error("Telegram error:", error);
-            return res.status(500).json({ error: 'Telegram error', details: error });
-        }
-
-        return res.status(200).json({ success: true });
+      res.status(200).json({ message: 'Data sent to Telegram' });
     } catch (error) {
-        console.error("Error occurred:", error);
-        return res.status(500).json({ error: 'Request failed', details: error.message });
+      console.error('Error sending data to Telegram:', error);
+      res.status(500).json({ message: 'Error sending data' });
     }
-}
+  } else {
+    res.status(405).json({ message: 'Method Not Allowed' });
+  }
+};
