@@ -1343,5 +1343,39 @@
         });
       });
     </script>
+    // Функция отправки данных в Telegram
+async function sendToTelegram(data) {
+  const token = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';  // Ваш токен бота
+  const chat_id = '7373169686';  // Ваш ID чата в Telegram
+  const message = `
+    Новый запрос с сайта:
+
+    Имя: ${data.name}
+    Телефон: ${data.phone}
+    Время звонка: ${data.time || 'Не указано'}
+    Тип кровли: ${data.roofType || 'Не указано'}
+    Площадь кровли: ${data.roofArea || 'Не указано'}
+    Сложность кровли: ${data.roofComplexity || 'Не указано'}
+  `;
+
+  const telegramAPI = `https://api.telegram.org/bot${token}/sendMessage`;
+  const response = await fetch(telegramAPI, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id,
+      text: message,
+    }),
+  });
+
+  if (response.ok) {
+    console.log('Сообщение отправлено в Telegram');
+  } else {
+    console.error('Ошибка отправки сообщения в Telegram');
+  }
+}
+
   </body>
 </html>
