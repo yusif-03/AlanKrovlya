@@ -377,41 +377,64 @@
       });
     </script>
     <header class="fixed top-0 left-0 right-0 bg-blue-950 shadow-md z-50">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-20">
-            <!-- Логотип -->
-            <div class="flex items-center">
-              <div class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center">
-                <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
-              </div>
-              <a href="/" class="text-2xl font-['Pacifico'] text-white whitespace-nowrap">Алан-Кровля</a>
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-20">
+          <div class="flex items-center">
+            <div
+              class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center"
+            >
+              <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
             </div>
-      
-            <!-- Бургер меню (мобильное) -->
-            <button id="menuToggle" class="text-white text-2xl md:hidden focus:outline-none">
-              <i class="ri-menu-line"></i>
+            <a href="#home" class="text-3xl font-['Pacifico'] text-white"
+              >Алан-Кровля</a
+            >
+          </div>
+          <nav class="hidden md:flex space-x-8">
+            <a
+              href="#home"
+              class="nav-link text-gray-200 hover:text-primary pb-1"
+              data-section="home"
+              >Главная</a
+            >
+            <a
+              href="#about"
+              class="nav-link text-gray-200 hover:text-primary pb-1"
+              data-section="about"
+              >О компании</a
+            >
+            <a
+              href="#services"
+              class="nav-link text-gray-200 hover:text-primary pb-1"
+              data-section="services"
+              >Услуги</a
+            >
+            <a
+              href="#testimonials"
+              class="nav-link text-gray-200 hover:text-primary pb-1"
+              data-section="testimonials"
+              >Отзывы</a
+            >
+            <a
+              href="#contacts"
+              class="nav-link text-gray-200 hover:text-primary pb-1"
+              data-section="contacts"
+              >Контакты</a
+            >
+          </nav>
+          <div class="flex items-center space-x-4">
+            <a href="tel:+79271661433" class="text-white font-medium"
+              >+7 (927) 166-14-33</a
+            >
+            <button
+              id="headerCallbackBtn"
+              class="bg-primary text-blue-950 px-4 py-2 !rounded-button hover:bg-primary/90 whitespace-nowrap font-semibold"
+            >
+              Заказать звонок
             </button>
-      
-            <!-- Навигация -->
-            <nav id="mobileMenu" class="hidden absolute top-20 left-0 right-0 bg-blue-950 md:static md:flex md:space-x-8 md:bg-transparent md:items-center">
-              <a href="#" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="home">Главная</a>
-              <a href="#services" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="services">Услуги</a>
-              <a href="#projects" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="projects">Проекты</a>
-              <a href="#about" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="about">О компании</a>
-              <a href="#contacts" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="contacts">Контакты</a>
-            </nav>
-      
-            <!-- Контакт -->
-            <div class="hidden md:flex items-center space-x-4">
-              <a href="tel:+79271661433" class="text-white font-medium whitespace-nowrap">+7 (927) 166-14-33</a>
-              <button id="headerCallbackBtn" class="bg-primary text-blue-950 px-4 py-2 rounded-button hover:bg-primary/90 font-semibold">
-                Заказать звонок
-              </button>
-            </div>
           </div>
         </div>
-      </header>
-      
+      </div>
+    </header>
     <main class="pt-20">
       <section
         id="home"
@@ -577,53 +600,95 @@
       <section id="services" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">Наши услуги</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Монтаж кровли -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
-              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/132603e46cdfc512a4e0464e51745871.jpeg" alt="Монтаж кровли" class="w-full h-48 object-cover rounded-lg mb-4">
+          <div class="grid md:grid-cols-4 gap-8">
+            <div
+              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
+            >
+              <img
+                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/132603e46cdfc512a4e0464e51745871.jpeg"
+                alt="Монтаж кровли"
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
               <h3 class="text-xl font-semibold mb-2">Монтаж кровли</h3>
-              <p class="text-gray-500 mb-4">Профессиональный монтаж всех видов кровельных материалов</p>
-              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="1">
-                Подробнее <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-400 mb-4">
+                Профессиональный монтаж всех видов кровельных материалов
+              </p>
+              <button
+                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
+                data-service="1"
+              >
+                Подробнее
+                <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-      
-            <!-- Ремонт кровли -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
-              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/009729d642dc73befa98feb91bfd1163.jpeg" alt="Ремонт кровли" class="w-full h-48 object-cover rounded-lg mb-4">
+            <div
+              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
+            >
+              <img
+                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/009729d642dc73befa98feb91bfd1163.jpeg"
+                alt="Ремонт кровли"
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
               <h3 class="text-xl font-semibold mb-2">Ремонт кровли</h3>
-              <p class="text-gray-500 mb-4">Оперативный ремонт протечек и повреждений любой сложности</p>
-              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="2">
-                Подробнее <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-500 mb-4">
+                Оперативный ремонт протечек и повреждений любой сложности
+              </p>
+              <button
+                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
+                data-service="2"
+              >
+                Подробнее
+                <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-      
-            <!-- Утепление кровли -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
-              <img src="https://public.readdy.ai/ai/img_res/7aa9d3646b8db6c37b58b7cd5d50ed91.jpg" alt="Утепление кровли" class="w-full h-48 object-cover rounded-lg mb-4">
+            <div
+              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
+            >
+              <img
+                src="https://public.readdy.ai/ai/img_res/7aa9d3646b8db6c37b58b7cd5d50ed91.jpg"
+                alt="Утепление кровли"
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
               <h3 class="text-xl font-semibold mb-2">Утепление кровли</h3>
-              <p class="text-gray-500 mb-4">Современные решения для теплоизоляции вашей крыши</p>
-              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="3">
-                Подробнее <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-500 mb-4">
+                Современные решения для теплоизоляции вашей крыши
+              </p>
+              <button
+                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
+                data-service="3"
+              >
+                Подробнее
+                <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-      
-            <!-- Мягкая кровля -->
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
-              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/0f4936616c57d76d101cb689fa224d7a.jpeg" alt="Мягкая кровля для гаражей" class="w-full h-48 object-cover rounded-lg mb-4">
-              <h3 class="text-xl font-semibold mb-2">Мягкая кровля для гаражей и ангаров</h3>
-              <p class="text-gray-500 mb-4">Специализируемся на монтаже мягкой кровли для гаражей, ангаров и хозпостроек</p>
-              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="4">
-                Подробнее <i class="ri-arrow-right-line ml-2"></i>
+            <div
+              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
+            >
+              <img
+                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/0f4936616c57d76d101cb689fa224d7a.jpeg"
+                alt="Мягкая кровля для гаражей"
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
+              <h3 class="text-xl font-semibold mb-2">
+                Мягкая кровля для гаражей и ангаров
+              </h3>
+              <p class="text-gray-500 mb-4">
+                Специализируемся на монтаже мягкой кровли для гаражей, ангаров и
+                хозпостроек. Также устанавливаем заборы из профлиста.
+              </p>
+              <button
+                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
+                data-service="4"
+              >
+                Подробнее
+                <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-      
           </div>
         </div>
       </section>
-      
-       <section id="testimonials"
+      <section
+        id="testimonials"
         class="py-20 bg-blue-200"
         data-section="testimonials"
       >
@@ -887,7 +952,8 @@
         <i class="ri-vk-line text-xl"></i>
       </a>
       <button
-        id="callbackBtn" class="w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90"
+        id="callbackBtn"
+        class="w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90"
       >
         <i class="ri-phone-line text-xl"></i>
       </button>
@@ -958,151 +1024,47 @@
       </div>
     </div>
     <script>
-     <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Обработчики для модального окна обратного звонка
-    const callbackBtn = document.getElementById("callbackBtn");
-    const headerCallbackBtn = document.getElementById("headerCallbackBtn");
-    const callbackModal = document.getElementById("callbackModal");
-    const closeCallbackModalBtn = document.getElementById("closeCallbackModalBtn");
-    const callbackForm = document.getElementById("callbackForm");
-
-    // Функция открытия модального окна
-    function openCallbackModal() {
-      callbackModal.classList.remove("hidden");
-      document.body.style.overflow = "hidden";
-    }
-
-    // Функция закрытия модального окна
-    function closeCallbackModal() {
-      callbackModal.classList.add("hidden");
-      document.body.style.overflow = "";
-    }
-
-    // Добавляем обработчики событий для открытия и закрытия модального окна
-    callbackBtn.addEventListener("click", openCallbackModal);
-    headerCallbackBtn.addEventListener("click", openCallbackModal);
-    closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
-    callbackModal.addEventListener("click", function (e) {
-      if (e.target === callbackModal) {
-        closeCallbackModal();
-      }
-    });
-
-    // Обработка формы обратного звонка
-    callbackForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const callbackName = document.getElementById("callbackName").value;
-      const callbackPhone = document.getElementById("callbackPhone").value;
-      const callbackTime = document.getElementById("callbackTime").value;
-
-      if (!callbackName || !callbackPhone) {
-        const errorMessage = document.createElement("div");
-        errorMessage.className = "text-red-500 mt-4 text-center";
-        errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
-        const existingError = callbackForm.querySelector(".text-red-500");
-        if (existingError) {
-          existingError.remove();
+      document.addEventListener("DOMContentLoaded", function () {
+        // Обработчики для модального окна обратного звонка
+        const callbackBtn = document.getElementById("callbackBtn");
+        const headerCallbackBtn = document.getElementById("headerCallbackBtn");
+        const callbackModal = document.getElementById("callbackModal");
+        const closeCallbackModalBtn = document.getElementById(
+          "closeCallbackModalBtn",
+        );
+        const callbackForm = document.getElementById("callbackForm");
+        function openCallbackModal() {
+          callbackModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
         }
-        callbackForm.appendChild(errorMessage);
-        return;
-      }
-
-      // Формируем данные для отправки в Telegram
-      const formData = {
-        name: callbackName,
-        phone: callbackPhone,
-        time: callbackTime,
-      };
-
-      // Отправка данных в Telegram
-      sendToTelegram(formData)
-        .then(() => {
-          // Если все прошло успешно
-          callbackForm.innerHTML = `
-            <div class="text-center py-8">
-              <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <i class="ri-check-line text-green-600 text-3xl"></i>
-              </div>
-              <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
-              <p class="text-gray-600 mb-6">Мы перезвоним вам в ближайшее время.</p>
-              <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
-                Закрыть
-              </button>
-            </div>
-          `;
-
-          document
-            .getElementById("closeCallbackSuccessBtn")
-            .addEventListener("click", function () {
-              closeCallbackModal();
-              // Восстанавливаем форму после закрытия
-              setTimeout(() => {
-                callbackForm.innerHTML = `
-                  <div class="mb-6">
-                    <label class="block text-gray-700 mb-2" for="callbackName">Ваше имя</label>
-                    <input type="text" id="callbackName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-                  </div>
-                  <div class="mb-6">
-                    <label class="block text-gray-700 mb-2" for="callbackPhone">Телефон</label>
-                    <input type="tel" id="callbackPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-                  </div>
-                  <div class="mb-6">
-                    <label class="block text-gray-700 mb-2" for="callbackTime">Удобное время для звонка</label>
-                    <select id="callbackTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-                      <option value="asap">Как можно скорее</option>
-                      <option value="morning">Утро (9:00 - 12:00)</option>
-                      <option value="afternoon">День (12:00 - 15:00)</option>
-                      <option value="evening">Вечер (15:00 - 18:00)</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-                    Заказать звонок
-                  </button>
-                  <p class="text-sm text-gray-500 mt-4 text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
-                `;
-              }, 300);
-            });
-        })
-        .catch((error) => {
-          console.error('Ошибка при отправке в Telegram:', error);
+        function closeCallbackModal() {
+          callbackModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        }
+        callbackBtn.addEventListener("click", openCallbackModal);
+        headerCallbackBtn.addEventListener("click", openCallbackModal);
+        closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
+        callbackModal.addEventListener("click", function (e) {
+          if (e.target === callbackModal) {
+            closeCallbackModal();
+          }
         });
-    });
-  });
-
-  // Функция отправки данных в Telegram
-  async function sendToTelegram(data) {
-    const token = 'YOUR_BOT_TOKEN'; // Замените на ваш токен
-    const chat_id = 'YOUR_CHAT_ID'; // Замените на ваш ID чата
-    const message = `
-      Новый запрос с сайта:
-
-      Имя: ${data.name}
-      Телефон: ${data.phone}
-      Время звонка: ${data.time || 'Не указано'}
-    `;
-
-    const telegramAPI = `https://api.telegram.org/bot${token}/sendMessage`;
-    const response = await fetch(telegramAPI, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id,
-        text: message,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('Сообщение отправлено в Telegram');
-    } else {
-      console.error('Ошибка отправки сообщения в Telegram');
-    }
-  }
-</script>
-
+        callbackForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const callbackName = document.getElementById("callbackName").value;
+          const callbackPhone = document.getElementById("callbackPhone").value;
+          if (!callbackName || !callbackPhone) {
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "text-red-500 mt-4 text-center";
+            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
+            const existingError = callbackForm.querySelector(".text-red-500");
+            if (existingError) {
+              existingError.remove();
+            }
+            callbackForm.appendChild(errorMessage);
+            return;
+          }
+          // Здесь можно добавить отправку данных на сервер
           // Для демонстрации просто показываем сообщение об успехе
           callbackForm.innerHTML = `
       <div class="text-center py-8">
@@ -1446,39 +1408,5 @@
         });
       });
     </script>
-    // Функция отправки данных в Telegram
-async function sendToTelegram(data) {
-  const token = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';  // Ваш токен бота
-  const chat_id = '7373169686';  // Ваш ID чата в Telegram
-  const message = `
-    Новый запрос с сайта:
-
-    Имя: ${data.name}
-    Телефон: ${data.phone}
-    Время звонка: ${data.time || 'Не указано'}
-    Тип кровли: ${data.roofType || 'Не указано'}
-    Площадь кровли: ${data.roofArea || 'Не указано'}
-    Сложность кровли: ${data.roofComplexity || 'Не указано'}
-  `;
-
-  const telegramAPI = `https://api.telegram.org/bot${token}/sendMessage`;
-  const response = await fetch(telegramAPI, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      chat_id,
-      text: message,
-    }),
-  });
-
-  if (response.ok) {
-    console.log('Сообщение отправлено в Telegram');
-  } else {
-    console.error('Ошибка отправки сообщения в Telegram');
-  }
-}
-
   </body>
 </html>
