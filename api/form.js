@@ -8,9 +8,9 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { name, phone, service, message } = req.body || {};
+    const { name, phone, roofType, roofArea, service, message } = req.body || {};
 
-    if (!name || !phone || !service) {
+    if (!name || !phone || !roofType || !roofArea || !service) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
