@@ -959,87 +959,150 @@
       </div>
     </div>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Обработчики для модального окна обратного звонка
-        const callbackBtn = document.getElementById("callbackBtn");
-        const headerCallbackBtn = document.getElementById("headerCallbackBtn");
-        const callbackModal = document.getElementById("callbackModal");
-        const closeCallbackModalBtn = document.getElementById(
-          "closeCallbackModalBtn",
-        );
-        const callbackForm = document.getElementById("callbackForm");
-        function openCallbackModal() {
-          callbackModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        }
-        function closeCallbackModal() {
-          callbackModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        }
-        callbackBtn.addEventListener("click", openCallbackModal);
-        headerCallbackBtn.addEventListener("click", openCallbackModal);
-        closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
-        callbackModal.addEventListener("click", function (e) {
-          if (e.target === callbackModal) {
-            closeCallbackModal();
-          }
-        });
-        costCalculatorForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-  
-  const roofType = document.getElementById("roofType").value;
-  const roofArea = document.getElementById("roofArea").value;
-  const roofComplexity = document.getElementById("roofComplexity").value;
-  const clientName = document.getElementById("clientName").value;
-  const clientPhone = document.getElementById("clientPhone").value;
+     <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Обработчики для модального окна обратного звонка
+    const callbackBtn = document.getElementById("callbackBtn");
+    const headerCallbackBtn = document.getElementById("headerCallbackBtn");
+    const callbackModal = document.getElementById("callbackModal");
+    const closeCallbackModalBtn = document.getElementById("closeCallbackModalBtn");
+    const callbackForm = document.getElementById("callbackForm");
 
-  if (!roofType || !roofArea || !clientName || !clientPhone) {
-    const errorMessage = document.createElement("div");
-    errorMessage.className = "text-red-500 mt-4 text-center";
-    errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
-    const existingError = costCalculatorForm.querySelector(".text-red-500");
-    if (existingError) {
-      existingError.remove();
+    // Функция открытия модального окна
+    function openCallbackModal() {
+      callbackModal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
     }
-    costCalculatorForm.appendChild(errorMessage);
-    return;
-  }
 
-  // Формируем данные для отправки в Telegram
-  const formData = {
-    name: clientName,
-    phone: clientPhone,
-    roofType: roofType,
-    roofArea: roofArea,
-    roofComplexity: roofComplexity,
-  };
+    // Функция закрытия модального окна
+    function closeCallbackModal() {
+      callbackModal.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
 
-  // Отправляем данные в Telegram
-  sendToTelegram(formData)
-    .then(() => {
-      costCalculatorForm.innerHTML = `
-        <div class="text-center py-8">
-          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-            <i class="ri-check-line text-green-600 text-3xl"></i>
-          </div>
-          <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
-          <p class="text-gray-600 mb-6">Мы свяжемся с вами для уточнения деталей.</p>
-          <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
-            Закрыть
-          </button>
-        </div>
-      `;
-      document
-        .getElementById("closeCallbackSuccessBtn")
-        .addEventListener("click", function () {
-          costCalculatorModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        });
-    })
-    .catch((error) => {
-      console.error('Ошибка при отправке в Telegram:', error);
+    // Добавляем обработчики событий для открытия и закрытия модального окна
+    callbackBtn.addEventListener("click", openCallbackModal);
+    headerCallbackBtn.addEventListener("click", openCallbackModal);
+    closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
+    callbackModal.addEventListener("click", function (e) {
+      if (e.target === callbackModal) {
+        closeCallbackModal();
+      }
     });
-});
+
+    // Обработка формы обратного звонка
+    callbackForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const callbackName = document.getElementById("callbackName").value;
+      const callbackPhone = document.getElementById("callbackPhone").value;
+      const callbackTime = document.getElementById("callbackTime").value;
+
+      if (!callbackName || !callbackPhone) {
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "text-red-500 mt-4 text-center";
+        errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
+        const existingError = callbackForm.querySelector(".text-red-500");
+        if (existingError) {
+          existingError.remove();
+        }
+        callbackForm.appendChild(errorMessage);
+        return;
+      }
+
+      // Формируем данные для отправки в Telegram
+      const formData = {
+        name: callbackName,
+        phone: callbackPhone,
+        time: callbackTime,
+      };
+
+      // Отправка данных в Telegram
+      sendToTelegram(formData)
+        .then(() => {
+          // Если все прошло успешно
+          callbackForm.innerHTML = `
+            <div class="text-center py-8">
+              <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <i class="ri-check-line text-green-600 text-3xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
+              <p class="text-gray-600 mb-6">Мы перезвоним вам в ближайшее время.</p>
+              <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
+                Закрыть
+              </button>
+            </div>
+          `;
+
+          document
+            .getElementById("closeCallbackSuccessBtn")
+            .addEventListener("click", function () {
+              closeCallbackModal();
+              // Восстанавливаем форму после закрытия
+              setTimeout(() => {
+                callbackForm.innerHTML = `
+                  <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="callbackName">Ваше имя</label>
+                    <input type="text" id="callbackName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+                  </div>
+                  <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="callbackPhone">Телефон</label>
+                    <input type="tel" id="callbackPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+                  </div>
+                  <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="callbackTime">Удобное время для звонка</label>
+                    <select id="callbackTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
+                      <option value="asap">Как можно скорее</option>
+                      <option value="morning">Утро (9:00 - 12:00)</option>
+                      <option value="afternoon">День (12:00 - 15:00)</option>
+                      <option value="evening">Вечер (15:00 - 18:00)</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
+                    Заказать звонок
+                  </button>
+                  <p class="text-sm text-gray-500 mt-4 text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
+                `;
+              }, 300);
+            });
+        })
+        .catch((error) => {
+          console.error('Ошибка при отправке в Telegram:', error);
+        });
+    });
+  });
+
+  // Функция отправки данных в Telegram
+  async function sendToTelegram(data) {
+    const token = 'YOUR_BOT_TOKEN'; // Замените на ваш токен
+    const chat_id = 'YOUR_CHAT_ID'; // Замените на ваш ID чата
+    const message = `
+      Новый запрос с сайта:
+
+      Имя: ${data.name}
+      Телефон: ${data.phone}
+      Время звонка: ${data.time || 'Не указано'}
+    `;
+
+    const telegramAPI = `https://api.telegram.org/bot${token}/sendMessage`;
+    const response = await fetch(telegramAPI, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id,
+        text: message,
+      }),
+    });
+
+    if (response.ok) {
+      console.log('Сообщение отправлено в Telegram');
+    } else {
+      console.error('Ошибка отправки сообщения в Telegram');
+    }
+  }
+</script>
 
           // Для демонстрации просто показываем сообщение об успехе
           callbackForm.innerHTML = `
