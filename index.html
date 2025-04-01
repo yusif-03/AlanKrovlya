@@ -984,22 +984,63 @@
             closeCallbackModal();
           }
         });
-        callbackForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-          const callbackName = document.getElementById("callbackName").value;
-          const callbackPhone = document.getElementById("callbackPhone").value;
-          if (!callbackName || !callbackPhone) {
-            const errorMessage = document.createElement("div");
-            errorMessage.className = "text-red-500 mt-4 text-center";
-            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
-            const existingError = callbackForm.querySelector(".text-red-500");
-            if (existingError) {
-              existingError.remove();
-            }
-            callbackForm.appendChild(errorMessage);
-            return;
-          }
-          // Здесь можно добавить отправку данных на сервер
+        costCalculatorForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  
+  const roofType = document.getElementById("roofType").value;
+  const roofArea = document.getElementById("roofArea").value;
+  const roofComplexity = document.getElementById("roofComplexity").value;
+  const clientName = document.getElementById("clientName").value;
+  const clientPhone = document.getElementById("clientPhone").value;
+
+  if (!roofType || !roofArea || !clientName || !clientPhone) {
+    const errorMessage = document.createElement("div");
+    errorMessage.className = "text-red-500 mt-4 text-center";
+    errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
+    const existingError = costCalculatorForm.querySelector(".text-red-500");
+    if (existingError) {
+      existingError.remove();
+    }
+    costCalculatorForm.appendChild(errorMessage);
+    return;
+  }
+
+  // Формируем данные для отправки в Telegram
+  const formData = {
+    name: clientName,
+    phone: clientPhone,
+    roofType: roofType,
+    roofArea: roofArea,
+    roofComplexity: roofComplexity,
+  };
+
+  // Отправляем данные в Telegram
+  sendToTelegram(formData)
+    .then(() => {
+      costCalculatorForm.innerHTML = `
+        <div class="text-center py-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="ri-check-line text-green-600 text-3xl"></i>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
+          <p class="text-gray-600 mb-6">Мы свяжемся с вами для уточнения деталей.</p>
+          <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
+            Закрыть
+          </button>
+        </div>
+      `;
+      document
+        .getElementById("closeCallbackSuccessBtn")
+        .addEventListener("click", function () {
+          costCalculatorModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        });
+    })
+    .catch((error) => {
+      console.error('Ошибка при отправке в Telegram:', error);
+    });
+});
+
           // Для демонстрации просто показываем сообщение об успехе
           callbackForm.innerHTML = `
       <div class="text-center py-8">
