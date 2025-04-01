@@ -20,6 +20,10 @@ export default async function handler(req, res) {
 `;
 
   try {
+    // Разрешаем все источники
+    res.setHeader("Access-Control-Allow-Origin", "*");  
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");  
+
     const telegramURL = `https://api.telegram.org/bot${token}/sendMessage`;
     const response = await fetch(telegramURL, {
       method: 'POST',
