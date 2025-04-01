@@ -1,21 +1,20 @@
-const express = require('express');
 const fetch = require('node-fetch');
 
-const app = express();
-app.use(express.json()); // Middleware to parse JSON body
-
-// ⚠️ Hardcoded values (not recommended for production)
-const TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
-const CHAT_ID = '7373169686';
-
-app.post('/api/form', async (req, res) => {
+export default async function handler(req, res) {
     console.log("Request received:", req.method);
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+    }
 
     const { name, phone, service, message } = req.body || {};
 
     if (!name || !phone || !service) {
         return res.status(400).json({ error: "Missing required fields" });
     }
+
+    const TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
+    const CHAT_ID = '7373169686';
 
     const text = `
 📞 New Callback Request:
@@ -46,10 +45,4 @@ app.post('/api/form', async (req, res) => {
         console.error("Error occurred:", error);
         return res.status(500).json({ error: 'Request failed', details: error.message });
     }
-});
-
-// Start the server
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+}
