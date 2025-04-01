@@ -1,4 +1,3 @@
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -6,15 +5,15 @@ export default async function handler(req, res) {
 
   const { name, phone, service, message } = req.body;
 
-  const token = '7958576790:AAHbcJFAeNr_g8vq9rqW3jYIUvfAUiwrTw4';
-  const chat_id = '8042773428';
+  const token = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
+  const chat_id = '7373169686';
 
   const text = `
-🚨 Новая заявка с сайта:
+📥 Новая заявка с сайта:
 👤 Имя: ${name}
 📞 Телефон: ${phone}
-🛠️ Услуга: ${service}
-📝 Комментарий: ${message || '–'}
+🛠 Услуга: ${service}
+📩 Комментарий: ${message || '-'}
   `;
 
   try {
