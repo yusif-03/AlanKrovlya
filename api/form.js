@@ -1,14 +1,3 @@
-const express = require("express");
-const fetch = require("node-fetch");
-
-const app = express();
-app.use(express.json());
-
-// Токен бота и ID чата
-const TELEGRAM_BOT_TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
-const CHAT_ID = '7373169686';
-
-// Обработчик POST-запросов
 app.post("/api/form", async (req, res) => {
   const { name, phone, service, message, roofType, roofArea, roofComplexity, type } = req.body;
 
@@ -34,6 +23,8 @@ app.post("/api/form", async (req, res) => {
   }
 
   try {
+    console.log('Sending to Telegram:', telegramMessage); // Для отладки
+
     const telegramResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: {
@@ -49,16 +40,12 @@ app.post("/api/form", async (req, res) => {
     if (telegramResponse.ok) {
       res.status(200).json({ message: "Заявка успешно отправлена в Telegram" });
     } else {
-      res.status(500).json({ error: "Не удалось отправить сообщение в Telegram" });
+      const errorResponse = await telegramResponse.json();  // Получим информацию об ошибке
+      console.error('Telegram API error:', errorResponse);
+      res.status(500).json({ error: "Не удалось отправить сообщение в Telegram", details: errorResponse });
     }
   } catch (error) {
     console.error("Ошибка при отправке данных в Telegram:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
-});
-
-// Запуск сервера
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Сервер работает на порту ${PORT}`);
 });
