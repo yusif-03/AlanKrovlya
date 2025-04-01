@@ -1486,48 +1486,51 @@
       });
     </script>
 <script>
-  document.getElementById("callbackForm").addEventListener("submit", async function (e) {
-    e.preventDefault(); // предотвращаем стандартную отправку формы
+  document.addEventListener("DOMContentLoaded", function () {
+    // Обработчик для всех форм
+    document.querySelectorAll("form").forEach(function (form) {
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault(); // предотвращаем стандартную отправку формы
 
-    const name = document.getElementById("callbackName").value;
-    const phone = document.getElementById("callbackPhone").value;
-    const time = document.getElementById("callbackTime").value;
+        const formData = {};
+        form.querySelectorAll("input, select, textarea").forEach(function (input) {
+          formData[input.name] = input.value;
+        });
 
-    // Проверка обязательных полей
-    if (!name || !phone || !time) {
-      alert("Пожалуйста, заполните все обязательные поля");
-      return;
-    }
+        // Проверка обязательных полей (можно добавлять логику для проверки каждого поля по типу)
+        for (const [key, value] of Object.entries(formData)) {
+          if (!value) {
+            alert(`Пожалуйста, заполните поле: ${key}`);
+            return;
+          }
+        }
 
-    const formData = {
-      name: name,
-      phone: phone,
-      service: time,
-      message: "Заказ обратного звонка"
-    };
+        try {
+          const response = await fetch("/api/form", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
 
-    try {
-      // Отправка данных на сервер Vercel API
-      const response = await fetch("/api/form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData)
+          if (response.ok) {
+            alert("Заявка отправлена успешно!");
+            form.reset(); // Очистка формы
+            if (form.id === "callbackForm") {
+              closeCallbackModal(); // Закрытие модального окна
+            }
+          } else {
+            const errorData = await response.json();
+            alert(`Ошибка при отправке заявки: ${errorData.error}`);
+          }
+        } catch (error) {
+          alert("Ошибка сети или сервера. Попробуйте позже.");
+        }
       });
-
-      if (response.ok) {
-        alert("Заявка отправлена успешно!");
-        document.getElementById("callbackForm").reset(); // Очистка формы
-        closeCallbackModal(); // Закрытие модального окна
-      } else {
-        const errorData = await response.json();
-        alert(`Ошибка при отправке заявки: ${errorData.error}`);
-      }
-    } catch (error) {
-      alert("Ошибка сети или сервера. Попробуйте позже.");
-    }
+    });
   });
 </script>
+
   </body>
 </html>
