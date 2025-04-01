@@ -1487,17 +1487,20 @@
     </script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Обработчик для всех форм
+    // Обработчик для всех форм на странице
     document.querySelectorAll("form").forEach(function (form) {
       form.addEventListener("submit", async function (e) {
         e.preventDefault(); // предотвращаем стандартную отправку формы
 
         const formData = {};
+        // Собираем данные всех полей формы
         form.querySelectorAll("input, select, textarea").forEach(function (input) {
-          formData[input.name] = input.value;
+          if (input.name) {
+            formData[input.name] = input.value; // Добавляем значение поля в formData
+          }
         });
 
-        // Проверка обязательных полей (можно добавлять логику для проверки каждого поля по типу)
+        // Проверка обязательных полей (если они не пустые)
         for (const [key, value] of Object.entries(formData)) {
           if (!value) {
             alert(`Пожалуйста, заполните поле: ${key}`);
@@ -1505,6 +1508,7 @@
           }
         }
 
+        // Отправка данных на сервер (API)
         try {
           const response = await fetch("/api/form", {
             method: "POST",
@@ -1516,9 +1520,10 @@
 
           if (response.ok) {
             alert("Заявка отправлена успешно!");
-            form.reset(); // Очистка формы
+            form.reset(); // Очистка формы после отправки
+            // Закрытие модального окна, если это форма обратного звонка
             if (form.id === "callbackForm") {
-              closeCallbackModal(); // Закрытие модального окна
+              closeCallbackModal(); // Закрыть модальное окно
             }
           } else {
             const errorData = await response.json();
@@ -1531,6 +1536,5 @@
     });
   });
 </script>
-
   </body>
 </html>
