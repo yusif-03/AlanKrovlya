@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   const { name, phone, service, message } = req.body;
 
-  const token = '7958576790:AAG5ldEUA5l2_h7dKlm1maM1eXtaSLW9MLE';
+  const token = '7958576790:AAHbcJFAeNr_g8vq9rqW3jYIUvfAUiwrTw4';
   const chat_id = '8042773428';
 
   const text = `
