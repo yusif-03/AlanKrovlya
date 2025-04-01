@@ -1408,5 +1408,52 @@
         });
       });
     </script>
+    <!-- Добавление JavaScript кода для отправки формы -->
+<script>
+  // Обработчик отправки формы
+  document.getElementById("callbackForm").addEventListener("submit", async function (e) {
+    e.preventDefault(); // предотвращаем обычную отправку формы
+
+    const name = document.getElementById("callbackName").value;
+    const phone = document.getElementById("callbackPhone").value;
+    const time = document.getElementById("callbackTime").value;
+
+    // Проверка, чтобы поля не были пустыми
+    if (!name || !phone || !time) {
+      alert("Пожалуйста, заполните все обязательные поля");
+      return;
+    }
+
+    const formData = {
+      name: name,
+      phone: phone,
+      service: time,
+      message: "Заказ обратного звонка"
+    };
+
+    // Отправка данных на сервер через fetch
+    try {
+      const response = await fetch("/api/form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        alert("Заявка отправлена успешно!");
+        document.getElementById("callbackForm").reset(); // Очистка формы
+        closeCallbackModal(); // Закрытие модального окна
+      } else {
+        const errorData = await response.json();
+        alert(`Ошибка при отправке заявки: ${errorData.error}`);
+      }
+    } catch (error) {
+      alert("Ошибка сети или сервера. Попробуйте позже.");
+    }
+  });
+</script>
+
   </body>
 </html>
