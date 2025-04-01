@@ -72,91 +72,87 @@
             <i class="ri-close-line text-2xl"></i>
           </button>
         </div>
-       <form id="costCalculatorForm">
-  <div class="mb-6">
-    <label class="block text-gray-700 mb-2" for="roofType">Тип кровли</label>
-    <select id="roofType" name="roofType" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-      <option value="">Выберите тип кровли</option>
-      <option value="metal">Металлочерепица (700 ₽/м²)</option>
-      <option value="soft">Мягкая кровля (500 ₽/м²)</option>
-      <option value="soft-garage">Мягкая кровля для гаража/ангара (500 ₽/м²)</option>
-      <option value="bitumen-roll">Рулонные битумные покрытия (200 ₽/м²)</option>
-      <option value="bitumen-polymer">Рулонные битумно-полимерные покрытия (300 ₽/м²)</option>
-      <option value="ondulin">Ондулиновое покрытие (300 ₽/м²)</option>
-      <option value="other">Другое</option>
-    </select>
-  </div>
-  <div class="mb-6">
-    <label class="block text-gray-700 mb-2" for="roofArea">Площадь кровли (м²)</label>
-    <input type="number" id="roofArea" name="roofArea" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required />
-  </div>
-  <div class="mb-6">
-    <label class="block text-gray-700 mb-2" for="clientName">Ваше имя</label>
-    <input type="text" id="clientName" name="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required />
-  </div>
-  <div class="mb-6">
-    <label class="block text-gray-700 mb-2" for="clientPhone">Телефон</label>
-    <input type="tel" id="clientPhone" name="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required />
-  </div>
-  <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-    Получить расчет
-  </button>
-</form>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Обработчик для формы "costCalculatorForm"
-    const costCalculatorForm = document.getElementById("costCalculatorForm");
-    
-    costCalculatorForm.addEventListener("submit", async function (e) {
-        e.preventDefault(); // предотвращаем стандартную отправку формы
-
-        const formData = {};
-        // Собираем данные всех полей формы
-        costCalculatorForm.querySelectorAll("input, select, textarea").forEach(function (input) {
-            if (input.name) {
-                formData[input.name] = input.value; // Добавляем значение поля в formData
-            }
-        });
-
-        // Логируем данные перед отправкой
-        console.log("Form Data to send:", formData);  // Логируем данные
-
-        // Проверка обязательных полей (если они не пустые)
-        for (const [key, value] of Object.entries(formData)) {
-            if (!value) {
-                alert(`Пожалуйста, заполните поле: ${key}`);
-                return;
-            }
-        }
-
-        // Отправка данных на сервер (API)
-        try {
-            const response = await fetch("/api/form", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                alert("Заявка отправлена успешно!");
-                costCalculatorForm.reset(); // Очистка формы после отправки
-                // Закрытие модального окна, если это форма обратного звонка
-                if (costCalculatorForm.id === "callbackForm") {
-                    closeCallbackModal(); // Закрыть модальное окно
-                }
-            } else {
-                const errorData = await response.json();
-                alert(`Ошибка при отправке заявки: ${errorData.error}`);
-            }
-        } catch (error) {
-            alert("Ошибка сети или сервера. Попробуйте позже.");
-        }
-    });
-  });
-</script>
-
+        <form id="costCalculatorForm">
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="roofType"
+              >Тип кровли</label
+            >
+            <select
+              id="roofType"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
+            >
+              <option value="">Выберите тип кровли</option>
+              <option value="metal">Металлочерепица (700 ₽/м²)</option>
+              <option value="soft">Мягкая кровля (500 ₽/м²)</option>
+              <option value="soft-garage">
+                Мягкая кровля для гаража/ангара (500 ₽/м²)
+              </option>
+              <option value="bitumen-roll">
+                Рулонные битумные покрытия (200 ₽/м²)
+              </option>
+              <option value="bitumen-polymer">
+                Рулонные битумно-полимерные покрытия (300 ₽/м²)
+              </option>
+              <option value="ondulin">Ондулиновое покрытие (300 ₽/м²)</option>
+              <option value="other">Другое</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="roofArea"
+              >Площадь кровли (м²)</label
+            >
+            <input
+              type="number"
+              id="roofArea"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="roofComplexity"
+              >Сложность кровли</label
+            >
+            <select
+              id="roofComplexity"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
+            >
+              <option value="simple">Простая (односкатная)</option>
+              <option value="medium" selected>Средняя (двускатная)</option>
+              <option value="complex">Сложная (многоскатная)</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="clientName"
+              >Ваше имя</label
+            >
+            <input
+              type="text"
+              id="clientName"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="clientPhone"
+              >Телефон</label
+            >
+            <input
+              type="tel"
+              id="clientPhone"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold"
+          >
+            Получить расчет
+          </button>
+          <p class="text-sm text-gray-500 mt-4 text-center">
+            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+          </p>
+        </form>
       </div>
     </div>
     <script>
@@ -1039,6 +1035,7 @@
         );
         const callbackForm = document.getElementById("callbackForm");
         const contactForm = document.getElementById("contactForm");
+
         function openCallbackModal() {
           callbackModal.classList.remove("hidden");
           document.body.style.overflow = "hidden";
@@ -1118,6 +1115,7 @@
               }, 300);
             });
         });
+
         // Обработчик для формы контактов
         if (contactForm) {
           contactForm.addEventListener("submit", function (e) {
@@ -1489,56 +1487,5 @@
         });
       });
     </script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Обработчик для всех форм на странице
-    document.querySelectorAll("form").forEach(function (form) {
-      form.addEventListener("submit", async function (e) {
-        e.preventDefault(); // предотвращаем стандартную отправку формы
-
-        const formData = {};
-        // Собираем данные всех полей формы
-        form.querySelectorAll("input, select, textarea").forEach(function (input) {
-          if (input.name) {
-            formData[input.name] = input.value; // Добавляем значение поля в formData
-          }
-        });
-
-        // Проверка обязательных полей (если они не пустые)
-        for (const [key, value] of Object.entries(formData)) {
-          if (!value) {
-            alert(`Пожалуйста, заполните поле: ${key}`);
-            return;
-          }
-        }
-
-        // Отправка данных на сервер (API)
-        try {
-          const response = await fetch("/api/form", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          });
-
-          if (response.ok) {
-            alert("Заявка отправлена успешно!");
-            form.reset(); // Очистка формы после отправки
-            // Закрытие модального окна, если это форма обратного звонка
-            if (form.id === "callbackForm") {
-              closeCallbackModal(); // Закрыть модальное окно
-            }
-          } else {
-            const errorData = await response.json();
-            alert(`Ошибка при отправке заявки: ${errorData.error}`);
-          }
-        } catch (error) {
-          alert("Ошибка сети или сервера. Попробуйте позже.");
-        }
-      });
-    });
-  });
-</script>
   </body>
 </html>
