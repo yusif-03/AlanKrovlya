@@ -1487,31 +1487,27 @@
         });
       });
     </script>
-    <script>
-  document.getElementById('costCalculatorForm').addEventListener('submit', function (e) {
-    e.preventDefault();
+<script type="text/javascript">
+  (function() {
+    // Initialize EmailJS with your user ID
+    emailjs.init("tm5TirRCp4TomOIrb");  // Replace with your actual User ID
 
-    // Создание объекта с данными формы
-    const formData = new FormData(this);
+    // Add the form submission event listener
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent the form from submitting the default way
 
-    // Отправка данных на сервер (Vercel API)
-    fetch('/api/form', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === 'Data sent to Telegram') {
-        alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
-      } else {
-        alert('Произошла ошибка при отправке данных.');
-      }
-    })
-    .catch(error => {
-      console.error('Ошибка:', error);
-      alert('Произошла ошибка при отправке данных.');
+      // Collect form data
+      var formData = new FormData(event.target); 
+
+      // Send form data to EmailJS
+      emailjs.sendForm("service_r6e4f05", "template_e1lqurj", formData)  // Replace YOUR_TEMPLATE_ID with your actual template ID
+        .then(function(response) {
+          alert('Your message has been sent successfully!');
+        }, function(error) {
+          alert('There was an error sending the message. Please try again.');
+        });
     });
-  });
+  })();
 </script>
 
   </body>
