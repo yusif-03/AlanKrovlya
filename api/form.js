@@ -13,8 +13,7 @@ module.exports = async (req, res) => {
       Сложность кровли: ${roofComplexity}
     `;
 
-    const telegramToken = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0
-';  // Заменить на токен бота
+    const telegramToken = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';  // Заменить на токен бота
     const chatId = '7373169686';  // Заменить на ID чата
 
     const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
