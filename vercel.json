@@ -1,13 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/form.js",
-      "use": "@vercel/node"
-    }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/form.js" }
   ]
 }
