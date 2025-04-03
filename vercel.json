@@ -7,7 +7,7 @@
     }
   ],
   "env": {
-    "TELEGRAM_BOT_TOKEN": "your_bot_token",
-    "TELEGRAM_CHAT_ID": "your_chat_id"
+    "TELEGRAM_BOT_TOKEN": "7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0",
+    "TELEGRAM_CHAT_ID": "7373169686"
   }
 }
