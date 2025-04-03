@@ -1,5 +1,13 @@
 {
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/form.js" }
-  ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/form.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "env": {
+    "TELEGRAM_BOT_TOKEN": "your_bot_token",
+    "TELEGRAM_CHAT_ID": "your_chat_id"
+  }
 }
