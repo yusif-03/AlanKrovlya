@@ -1416,5 +1416,62 @@
         });
       });
     </script>
+<script>
+  // Общая функция отправки для всех форм
+async function sendFormData(formData, formType) {
+  let text = `📢 <b>Новая заявка (${formType})</b>\n\n`;
+  
+  for (const [key, value] of formData.entries()) {
+    if (value) text += `▫️ <b>${key}</b>: ${value}\n`;
+  }
+
+  try {
+    const response = await fetch('/api/form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Ошибка сервера');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Ошибка:', error);
+    alert(`Ошибка: ${error.message}`);
+    return false;
+  }
+}
+
+// Обработчики для всех форм
+document.querySelectorAll('form').forEach(form => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const formType = form.id === 'costCalculatorForm' ? 'Расчет стоимости' : 
+                     form.id === 'callbackForm' ? 'Обратный звонок' : 'Контактная форма';
+
+    const isSent = await sendFormData(formData, formType);
+
+    if (isSent) {
+      form.innerHTML = `
+        <div class="text-center py-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="ri-check-line text-green-600 text-3xl"></i>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+          <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+          <button onclick="location.reload()" class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+            Закрыть
+          </button>
+        </div>
+      `;
+    }
+  });
+});
+</script>
   </body>
 </html>
