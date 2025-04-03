@@ -38,6 +38,7 @@
     </script>
   </head>
   <body class="bg-gray-50 text-gray-800">
+    <!-- Модальное окно деталей услуги -->
     <div
       id="serviceDetailsModal"
       class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
@@ -59,6 +60,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно расчета стоимости -->
     <div
       id="costCalculatorModal"
       class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
@@ -155,227 +158,75 @@
         </form>
       </div>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Плавная прокрутка для всех навигационных ссылок
-        const navLinks = document.querySelectorAll('nav a[href^="#"]');
-        navLinks.forEach((link) => {
-          link.addEventListener("click", function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute("href");
-            const section = this.getAttribute("data-section");
-            if (targetId === "#") {
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              });
-            } else {
-              const targetElement = document.querySelector(targetId);
-              if (targetElement) {
-                const headerHeight = document.querySelector("header").offsetHeight;
-                const targetPosition =
-                  targetElement.getBoundingClientRect().top +
-                  window.scrollY -
-                  headerHeight;
-                window.scrollTo({
-                  top: targetPosition,
-                  behavior: "smooth",
-                });
-              }
-            }
-            // Обновляем активную ссылку
-            setTimeout(() => {
-              document.querySelectorAll(".nav-link").forEach((navLink) => {
-                navLink.classList.remove(
-                  "text-primary",
-                  "border-b-2",
-                  "border-primary",
-                );
-                navLink.classList.add("text-gray-200");
-              });
-              this.classList.remove("text-gray-200");
-              this.classList.add("text-primary", "border-b-2", "border-primary");
-            }, 100);
-          });
-        });
-        // Функция для определения текущего раздела при прокрутке
-        function updateActiveNavLink() {
-          const scrollPosition = window.scrollY;
-          const headerHeight = document.querySelector("header").offsetHeight;
-          const windowHeight = window.innerHeight;
-          const middleOfViewport = scrollPosition + windowHeight / 2;
-          // Определяем, какой раздел сейчас в видимой области
-          const sections = [
-            {
-              id: "home",
-              top: 0,
-              bottom: document.querySelector("#about")?.offsetTop || windowHeight,
-            }, // Верх страницы
-            {
-              id: "about",
-              top: document.querySelector("#about")?.offsetTop || 0,
-              bottom: document.querySelector("#services")?.offsetTop || 0,
-            },
-            {
-              id: "services",
-              top: document.querySelector("#services")?.offsetTop || 0,
-              bottom: document.querySelector("#testimonials")?.offsetTop || 0,
-            },
-            {
-              id: "testimonials",
-              top: document.querySelector("#testimonials")?.offsetTop || 0,
-              bottom: document.querySelector("#contacts")?.offsetTop || 0,
-            },
-            {
-              id: "contacts",
-              top: document.querySelector("#contacts")?.offsetTop || 0,
-              bottom: document.body.scrollHeight,
-            },
-          ];
-          // Находим текущий активный раздел - тот, в котором находится середина экрана
-          let currentSection = "home";
-          for (const section of sections) {
-            if (
-              middleOfViewport >= section.top &&
-              middleOfViewport < section.bottom
-            ) {
-              currentSection = section.id;
-              break;
-            }
-          }
-          // Если мы в самом низу страницы, активируем последний раздел
-          if (scrollPosition + windowHeight >= document.body.scrollHeight - 10) {
-            currentSection = "contacts";
-          }
-          // Обновляем активную ссылку в навигации
-          document.querySelectorAll(".nav-link").forEach((link) => {
-            const section = link.getAttribute("data-section");
-            if (section === currentSection) {
-              if (!link.classList.contains("text-primary")) {
-                link.classList.remove("text-gray-200");
-                link.classList.add("text-primary", "border-b-2", "border-primary");
-              }
-            } else {
-              if (link.classList.contains("text-primary")) {
-                link.classList.remove("text-primary", "border-b-2", "border-primary");
-                link.classList.add("text-gray-200");
-              }
-            }
-          });
-        }
-        // Вызываем функцию при загрузке и при прокрутке
-        setTimeout(updateActiveNavLink, 500); // Увеличиваем задержку для корректной инициализации
-        window.addEventListener("scroll", function () {
-          requestAnimationFrame(updateActiveNavLink);
-        });
-        // Добавляем обработчик изменения размера окна для пересчета позиций секций
-        window.addEventListener("resize", function () {
-          setTimeout(updateActiveNavLink, 500);
-        });
-        // Модальное окно расчета стоимости
-        const calculateCostBtn = document.getElementById("calculateCostBtn");
-        const costCalculatorModal = document.getElementById("costCalculatorModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
-        const costCalculatorForm = document.getElementById("costCalculatorForm");
-        calculateCostBtn.addEventListener("click", function () {
-          costCalculatorModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        });
-        closeModalBtn.addEventListener("click", function () {
-          costCalculatorModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        });
-        costCalculatorModal.addEventListener("click", function (e) {
-          if (e.target === costCalculatorModal) {
-            costCalculatorModal.classList.add("hidden");
-            document.body.style.overflow = "";
-          }
-        });
-        costCalculatorForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-          const roofType = document.getElementById("roofType").value;
-          const roofArea = document.getElementById("roofArea").value;
-          const roofComplexity = document.getElementById("roofComplexity").value;
-          const clientName = document.getElementById("clientName").value;
-          const clientPhone = document.getElementById("clientPhone").value;
-          if (!roofType || !roofArea || !clientName || !clientPhone) {
-            const errorMessage = document.createElement("div");
-            errorMessage.className = "text-red-500 mt-4 text-center";
-            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
-            const existingError = costCalculatorForm.querySelector(".text-red-500");
-            if (existingError) {
-              existingError.remove();
-            }
-            costCalculatorForm.appendChild(errorMessage);
-            return;
-          }
-          // Здесь можно добавить отправку данных на сервер
-          // Для демонстрации просто показываем сообщение об успехе
-          costCalculatorForm.innerHTML = `
-      <div class="text-center py-8">
-      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-      <i class="ri-check-line text-green-600 text-3xl"></i>
+
+    <!-- Модальное окно обратного звонка -->
+    <div
+      id="callbackModal"
+      class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
+    >
+      <div
+        class="bg-blue-100 rounded-lg p-8 max-w-md w-full mx-4 text-gray-800 border border-blue-300"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold">Заказать обратный звонок</h3>
+          <button
+            id="closeCallbackModalBtn"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+        </div>
+        <form id="callbackForm">
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackName"
+              >Ваше имя</label
+            >
+            <input
+              type="text"
+              id="callbackName"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackPhone"
+              >Телефон</label
+            >
+            <input
+              type="tel"
+              id="callbackPhone"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackTime"
+              >Удобное время для звонка</label
+            >
+            <select
+              id="callbackTime"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
+            >
+              <option value="asap">Как можно скорее</option>
+              <option value="morning">Утро (9:00 - 12:00)</option>
+              <option value="afternoon">День (12:00 - 15:00)</option>
+              <option value="evening">Вечер (15:00 - 18:00)</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold"
+          >
+            Заказать звонок
+          </button>
+          <p class="text-sm text-gray-500 mt-4 text-center">
+            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+          </p>
+        </form>
       </div>
-      <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
-      <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей и предоставления расчета стоимости.</p>
-      <button id="closeSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
-      Закрыть
-      </button>
-      </div>
-      `;
-          document
-            .getElementById("closeSuccessBtn")
-            .addEventListener("click", function () {
-              costCalculatorModal.classList.add("hidden");
-              document.body.style.overflow = "";
-              // Восстанавливаем форму после закрытия
-              setTimeout(() => {
-                costCalculatorForm.innerHTML = `
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="roofType">Тип кровли</label>
-      <select id="roofType" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-      <option value="">Выберите тип кровли</option>
-      <option value="metal">Металлочерепица (700 ₽/м²)</option>
-      <option value="soft">Мягкая кровля (500 ₽/м²)</option>
-      <option value="soft-garage">Мягкая кровля для гаража/ангара (500 ₽/м²)</option>
-      <option value="bitumen-roll">Рулонные битумные покрытия (200 ₽/м²)</option>
-      <option value="bitumen-polymer">Рулонные битумно-полимерные покрытия (300 ₽/м²)</option>
-      <option value="ondulin">Ондулиновое покрытие (300 ₽/м²)</option>
-      <option value="other">Другое</option>
-      </select>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="roofArea">Площадь кровли (м²)</label>
-      <input type="number" id="roofArea" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="roofComplexity">Сложность кровли</label>
-      <select id="roofComplexity" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-      <option value="simple">Простая (односкатная)</option>
-      <option value="medium" selected>Средняя (двускатная)</option>
-      <option value="complex">Сложная (многоскатная)</option>
-      </select>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="clientName">Ваше имя</label>
-      <input type="text" id="clientName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="clientPhone">Телефон</label>
-      <input type="tel" id="clientPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-      </div>
-      <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-      Получить расчет
-      </button>
-      <p class="text-sm text-gray-500 mt-4 text-center">
-      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-      </p>
-      `;
-              }, 300);
-            });
-        });
-      });
-    </script>
+    </div>
+
+    <!-- Хедер -->
     <header class="fixed top-0 left-0 right-0 bg-blue-950 shadow-md z-50">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-20">
@@ -435,7 +286,10 @@
         </div>
       </div>
     </header>
+
+    <!-- Основной контент -->
     <main class="pt-20">
+      <!-- Секция героя -->
       <section
         id="home"
         class="hero-section min-h-[600px] flex items-center relative"
@@ -462,6 +316,8 @@
           </div>
         </div>
       </section>
+
+      <!-- О компании -->
       <section id="about" class="py-20 bg-white">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">О компании</h2>
@@ -544,6 +400,8 @@
           </div>
         </div>
       </section>
+
+      <!-- Преимущества -->
       <section class="py-20 bg-blue-200">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">
@@ -597,6 +455,8 @@
           </div>
         </div>
       </section>
+
+      <!-- Услуги -->
       <section id="services" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">Наши услуги</h2>
@@ -687,6 +547,8 @@
           </div>
         </div>
       </section>
+
+      <!-- Отзывы -->
       <section
         id="testimonials"
         class="py-20 bg-blue-200"
@@ -780,6 +642,8 @@
           </div>
         </div>
       </section>
+
+      <!-- Контакты -->
       <section id="contacts" class="py-20 bg-gray-100">
         <div class="container mx-auto px-4">
           <div class="max-w-2xl mx-auto">
@@ -862,6 +726,8 @@
         </div>
       </section>
     </main>
+
+    <!-- Футер -->
     <footer class="bg-blue-950 text-white py-12">
       <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-4 gap-8">
@@ -930,6 +796,8 @@
         </div>
       </div>
     </footer>
+
+    <!-- Плавающие кнопки -->
     <div class="fixed bottom-8 right-8 flex flex-col space-y-4">
       <a
         href="https://wa.me/message/GNNXLNFM62NTI1"
@@ -959,238 +827,297 @@
         <i class="ri-phone-line text-xl"></i>
       </button>
     </div>
-    <div
-      id="callbackModal"
-      class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
-    >
-      <div
-        class="bg-blue-100 rounded-lg p-8 max-w-md w-full mx-4 text-gray-800 border border-blue-300"
-      >
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold">Заказать обратный звонок</h3>
-          <button
-            id="closeCallbackModalBtn"
-            class="text-gray-500 hover:text-gray-700"
-          >
-            <i class="ri-close-line text-2xl"></i>
-          </button>
-        </div>
-        <form id="callbackForm">
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackName"
-              >Ваше имя</label
-            >
-            <input
-              type="text"
-              id="callbackName"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackPhone"
-              >Телефон</label
-            >
-            <input
-              type="tel"
-              id="callbackPhone"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackTime"
-              >Удобное время для звонка</label
-            >
-            <select
-              id="callbackTime"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
-            >
-              <option value="asap">Как можно скорее</option>
-              <option value="morning">Утро (9:00 - 12:00)</option>
-              <option value="afternoon">День (12:00 - 15:00)</option>
-              <option value="evening">Вечер (15:00 - 18:00)</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold"
-          >
-            Заказать звонок
-          </button>
-          <p class="text-sm text-gray-500 mt-4 text-center">
-            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-          </p>
-        </form>
-      </div>
-    </div>
+
+    <!-- Скрипты -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Обработчики для модального окна обратного звонка
+        // Настройки Telegram-бота
+        const BOT_TOKEN = "7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0";
+        const CHAT_ID = "7373169686";
+
+        // Функция для отправки данных в Telegram
+        async function sendToTelegram(formData) {
+          const text = `📌 Новая заявка с сайта:\n\n${formData}`;
+          const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ chat_id: CHAT_ID, text }),
+            });
+            return response.ok;
+          } catch (error) {
+            console.error("Ошибка отправки в Telegram:", error);
+            return false;
+          }
+        }
+
+        // Обработчик формы расчета стоимости
+        const costCalculatorForm = document.getElementById("costCalculatorForm");
+        if (costCalculatorForm) {
+          costCalculatorForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(costCalculatorForm);
+            let message = "📊 <b>Запрос расчета стоимости</b>\n";
+            
+            for (const [key, value] of formData.entries()) {
+              if (value) message += `▫️ ${key}: ${value}\n`;
+            }
+
+            const isSent = await sendToTelegram(message);
+
+            if (isSent) {
+              costCalculatorForm.innerHTML = `
+                <div class="text-center py-8">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ri-check-line text-green-600 text-3xl"></i>
+                  </div>
+                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+                  <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей.</p>
+                  <button onclick="document.getElementById('costCalculatorModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
+                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+                    Закрыть
+                  </button>
+                </div>
+              `;
+            } else {
+              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+            }
+          });
+        }
+
+        // Обработчик формы обратного звонка
+        const callbackForm = document.getElementById("callbackForm");
+        if (callbackForm) {
+          callbackForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(callbackForm);
+            let message = "📞 <b>Заказ обратного звонка</b>\n";
+            
+            for (const [key, value] of formData.entries()) {
+              if (value) message += `▫️ ${key}: ${value}\n`;
+            }
+
+            const isSent = await sendToTelegram(message);
+
+            if (isSent) {
+              callbackForm.innerHTML = `
+                <div class="text-center py-8">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ri-check-line text-green-600 text-3xl"></i>
+                  </div>
+                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+                  <p class="text-gray-600 mb-6">Мы перезвоним вам в указанное время.</p>
+                  <button onclick="document.getElementById('callbackModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
+                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+                    Закрыть
+                  </button>
+                </div>
+              `;
+            } else {
+              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+            }
+          });
+        }
+
+        // Обработчик формы контактов
+        const contactForm = document.getElementById("contactForm");
+        if (contactForm) {
+          contactForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(contactForm);
+            let message = "📩 <b>Новая заявка с сайта</b>\n";
+            
+            for (const [key, value] of formData.entries()) {
+              if (value) message += `▫️ ${key}: ${value}\n`;
+            }
+
+            const isSent = await sendToTelegram(message);
+
+            if (isSent) {
+              contactForm.innerHTML = `
+                <div class="text-center py-8">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ri-check-line text-green-600 text-3xl"></i>
+                  </div>
+                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+                  <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+                  <button onclick="location.reload()" 
+                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+                    Закрыть
+                  </button>
+                </div>
+              `;
+            } else {
+              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+            }
+          });
+        }
+
+        // Плавная прокрутка для всех навигационных ссылок
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href");
+            const section = this.getAttribute("data-section");
+            if (targetId === "#") {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            } else {
+              const targetElement = document.querySelector(targetId);
+              if (targetElement) {
+                const headerHeight = document.querySelector("header").offsetHeight;
+                const targetPosition =
+                  targetElement.getBoundingClientRect().top +
+                  window.scrollY -
+                  headerHeight;
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: "smooth",
+                });
+              }
+            }
+            // Обновляем активную ссылку
+            setTimeout(() => {
+              document.querySelectorAll(".nav-link").forEach((navLink) => {
+                navLink.classList.remove(
+                  "text-primary",
+                  "border-b-2",
+                  "border-primary",
+                );
+                navLink.classList.add("text-gray-200");
+              });
+              this.classList.remove("text-gray-200");
+              this.classList.add("text-primary", "border-b-2", "border-primary");
+            }, 100);
+          });
+        });
+
+        // Функция для определения текущего раздела при прокрутке
+        function updateActiveNavLink() {
+          const scrollPosition = window.scrollY;
+          const headerHeight = document.querySelector("header").offsetHeight;
+          const windowHeight = window.innerHeight;
+          const middleOfViewport = scrollPosition + windowHeight / 2;
+          // Определяем, какой раздел сейчас в видимой области
+          const sections = [
+            {
+              id: "home",
+              top: 0,
+              bottom: document.querySelector("#about")?.offsetTop || windowHeight,
+            }, // Верх страницы
+            {
+              id: "about",
+              top: document.querySelector("#about")?.offsetTop || 0,
+              bottom: document.querySelector("#services")?.offsetTop || 0,
+            },
+            {
+              id: "services",
+              top: document.querySelector("#services")?.offsetTop || 0,
+              bottom: document.querySelector("#testimonials")?.offsetTop || 0,
+            },
+            {
+              id: "testimonials",
+              top: document.querySelector("#testimonials")?.offsetTop || 0,
+              bottom: document.querySelector("#contacts")?.offsetTop || 0,
+            },
+            {
+              id: "contacts",
+              top: document.querySelector("#contacts")?.offsetTop || 0,
+              bottom: document.body.scrollHeight,
+            },
+          ];
+          // Находим текущий активный раздел - тот, в котором находится середина экрана
+          let currentSection = "home";
+          for (const section of sections) {
+            if (
+              middleOfViewport >= section.top &&
+              middleOfViewport < section.bottom
+            ) {
+              currentSection = section.id;
+              break;
+            }
+          }
+          // Если мы в самом низу страницы, активируем последний раздел
+          if (scrollPosition + windowHeight >= document.body.scrollHeight - 10) {
+            currentSection = "contacts";
+          }
+          // Обновляем активную ссылку в навигации
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            const section = link.getAttribute("data-section");
+            if (section === currentSection) {
+              if (!link.classList.contains("text-primary")) {
+                link.classList.remove("text-gray-200");
+                link.classList.add("text-primary", "border-b-2", "border-primary");
+              }
+            } else {
+              if (link.classList.contains("text-primary")) {
+                link.classList.remove("text-primary", "border-b-2", "border-primary");
+                link.classList.add("text-gray-200");
+              }
+            }
+          });
+        }
+        // Вызываем функцию при загрузке и при прокрутке
+        setTimeout(updateActiveNavLink, 500); // Увеличиваем задержку для корректной инициализации
+        window.addEventListener("scroll", function () {
+          requestAnimationFrame(updateActiveNavLink);
+        });
+        // Добавляем обработчик изменения размера окна для пересчета позиций секций
+        window.addEventListener("resize", function () {
+          setTimeout(updateActiveNavLink, 500);
+        });
+
+        // Модальное окно расчета стоимости
+        const calculateCostBtn = document.getElementById("calculateCostBtn");
+        const costCalculatorModal = document.getElementById("costCalculatorModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        calculateCostBtn.addEventListener("click", function () {
+          costCalculatorModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+        });
+        closeModalBtn.addEventListener("click", function () {
+          costCalculatorModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        });
+        costCalculatorModal.addEventListener("click", function (e) {
+          if (e.target === costCalculatorModal) {
+            costCalculatorModal.classList.add("hidden");
+            document.body.style.overflow = "";
+          }
+        });
+
+        // Модальное окно обратного звонка
         const callbackBtn = document.getElementById("callbackBtn");
         const headerCallbackBtn = document.getElementById("headerCallbackBtn");
         const callbackModal = document.getElementById("callbackModal");
-        const closeCallbackModalBtn = document.getElementById(
-          "closeCallbackModalBtn",
-        );
-        const callbackForm = document.getElementById("callbackForm");
-        const contactForm = document.getElementById("contactForm");
-
-        function openCallbackModal() {
+        const closeCallbackModalBtn = document.getElementById("closeCallbackModalBtn");
+        callbackBtn.addEventListener("click", function () {
           callbackModal.classList.remove("hidden");
           document.body.style.overflow = "hidden";
-        }
-        function closeCallbackModal() {
+        });
+        headerCallbackBtn.addEventListener("click", function () {
+          callbackModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+        });
+        closeCallbackModalBtn.addEventListener("click", function () {
           callbackModal.classList.add("hidden");
           document.body.style.overflow = "";
-        }
-        callbackBtn.addEventListener("click", openCallbackModal);
-        headerCallbackBtn.addEventListener("click", openCallbackModal);
-        closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
+        });
         callbackModal.addEventListener("click", function (e) {
           if (e.target === callbackModal) {
-            closeCallbackModal();
+            callbackModal.classList.add("hidden");
+            document.body.style.overflow = "";
           }
         });
-        callbackForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-          const callbackName = document.getElementById("callbackName").value;
-          const callbackPhone = document.getElementById("callbackPhone").value;
-          if (!callbackName || !callbackPhone) {
-            const errorMessage = document.createElement("div");
-            errorMessage.className = "text-red-500 mt-4 text-center";
-            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
-            const existingError = callbackForm.querySelector(".text-red-500");
-            if (existingError) {
-              existingError.remove();
-            }
-            callbackForm.appendChild(errorMessage);
-            return;
-          }
-          // Здесь можно добавить отправку данных на сервер
-          // Для демонстрации просто показываем сообщение об успехе
-          callbackForm.innerHTML = `
-      <div class="text-center py-8">
-      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-      <i class="ri-check-line text-green-600 text-3xl"></i>
-      </div>
-      <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
-      <p class="text-gray-600 mb-6">Мы перезвоним вам в ближайшее время.</p>
-      <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
-      Закрыть
-      </button>
-      </div>
-      `;
-          document
-            .getElementById("closeCallbackSuccessBtn")
-            .addEventListener("click", function () {
-              closeCallbackModal();
-              // Восстанавливаем форму после закрытия
-              setTimeout(() => {
-                callbackForm.innerHTML = `
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="callbackName">Ваше имя</label>
-      <input type="text" id="callbackName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="callbackPhone">Телефон</label>
-      <input type="tel" id="callbackPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-      </div>
-      <div class="mb-6">
-      <label class="block text-gray-700 mb-2" for="callbackTime">Удобное время для звонка</label>
-      <select id="callbackTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-      <option value="asap">Как можно скорее</option>
-      <option value="morning">Утро (9:00 - 12:00)</option>
-      <option value="afternoon">День (12:00 - 15:00)</option>
-      <option value="evening">Вечер (15:00 - 18:00)</option>
-      </select>
-      </div>
-      <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-      Заказать звонок
-      </button>
-      <p class="text-sm text-gray-500 mt-4 text-center">
-      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-      </p>
-      `;
-              }, 300);
-            });
-        });
 
-        // Обработчик для формы контактов
-        if (contactForm) {
-          contactForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const name = document.getElementById("name").value;
-            const phone = document.getElementById("phone").value;
-
-            if (!name || !phone) {
-              const errorMessage = document.createElement("div");
-              errorMessage.className = "text-red-500 mt-4 text-center";
-              errorMessage.textContent =
-                "Пожалуйста, заполните все обязательные поля";
-              const existingError = contactForm.querySelector(".text-red-500");
-              if (existingError) {
-                existingError.remove();
-              }
-              contactForm.appendChild(errorMessage);
-              return;
-            }
-
-            // Здесь можно добавить отправку данных на сервер
-            // Для демонстрации просто показываем сообщение об успехе
-            contactForm.innerHTML = `
-            <div class="text-center py-8">
-              <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <i class="ri-check-line text-green-600 text-3xl"></i>
-              </div>
-              <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
-              <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей.</p>
-              <button id="closeContactSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
-                Закрыть
-              </button>
-            </div>
-          `;
-
-            document
-              .getElementById("closeContactSuccessBtn")
-              .addEventListener("click", function () {
-                // Восстанавливаем форму
-                contactForm.innerHTML = `
-              <div class="mb-6">
-                <label class="block text-gray-700 mb-2" for="name">Ваше имя</label>
-                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-              </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 mb-2" for="phone">Телефон</label>
-                <input type="tel" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
-              </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 mb-2" for="service">Тип кровли</label>
-                <select id="service" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
-                  <option value="">Выберите тип кровли</option>
-                  <option value="metal">Металлочерепица (700 ₽/м²)</option>
-                  <option value="soft">Мягкая кровля (500 ₽/м²)</option>
-                  <option value="soft-garage">Мягкая кровля для гаража/ангара (500 ₽/м²)</option>
-                  <option value="bitumen-roll">Рулонные битумные покрытия (200 ₽/м²)</option>
-                  <option value="bitumen-polymer">Рулонные битумно-полимерные покрытия (300 ₽/м²)</option>
-                  <option value="ondulin">Ондулиновое покрытие (300 ₽/м²)</option>
-                  <option value="other">Другое</option>
-                </select>
-              </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 mb-2" for="message">Комментарий</label>
-                <textarea id="message" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"></textarea>
-              </div>
-              <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-                Отправить заявку
-              </button>
-              <p class="text-sm text-gray-500 mt-4 text-center">
-                Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-              </p>
-            `;
-              });
-          });
-        }
         // Модальное окно для подробностей об услугах
         const serviceDetailsModal = document.getElementById("serviceDetailsModal");
         const closeServiceModalBtn = document.getElementById("closeServiceModalBtn");
@@ -1457,13 +1384,15 @@
             .getElementById("orderServiceBtn")
             .addEventListener("click", function () {
               closeServiceModal();
-              openCallbackModal();
+              callbackModal.classList.remove("hidden");
+              document.body.style.overflow = "hidden";
             });
           document
             .getElementById("calculateServiceCostBtn")
             .addEventListener("click", function () {
               closeServiceModal();
-              document.getElementById("calculateCostBtn").click();
+              costCalculatorModal.classList.remove("hidden");
+              document.body.style.overflow = "hidden";
             });
           serviceDetailsModal.classList.remove("hidden");
           document.body.style.overflow = "hidden";
@@ -1487,87 +1416,5 @@
         });
       });
     </script>
-<script type="text/javascript">
-  (function() {
-    // Initialize EmailJS with your user ID
-    emailjs.init("tm5TirRCp4TomOIrb");  // Replace with your actual User ID
-
-    // Add the form submission event listener
-    document.getElementById("contactForm").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent the form from submitting the default way
-
-      // Collect form data
-      var formData = new FormData(event.target); 
-
-      // Send form data to EmailJS
-      emailjs.sendForm("service_r6e4f05", "template_e1lqurj", formData)  // Replace YOUR_TEMPLATE_ID with your actual template ID
-        .then(function(response) {
-          alert('Your message has been sent successfully!');
-        }, function(error) {
-          alert('There was an error sending the message. Please try again.');
-        });
-    });
-  })();
-</script>
-<script>
-  // Функция для отправки данных в Telegram
-async function sendToTelegram(botToken, chatId, formData) {
-  const text = `📌 Новая заявка с сайта:\n\n${formData}`;
-  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text })
-    });
-    return response.ok;
-  } catch (error) {
-    console.error('Ошибка отправки в Telegram:', error);
-    return false;
-  }
-}
-
-// Обработчик для всех форм
-document.querySelectorAll('form').forEach(form => {
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Собираем данные формы
-    const formData = new FormData(form);
-    let message = '';
-    
-    for (const [key, value] of formData.entries()) {
-      message += `▫️ ${key}: ${value}\n`;
-    }
-
-    // Ваши настройки бота
-    const BOT_TOKEN = 'ВАШ_ТОКЕН'; // Например, '123456:ABC-DEF1234'
-    const CHAT_ID = 'ВАШ_CHAT_ID'; // Например, '123456789'
-
-    // Отправляем в Telegram
-    const isSent = await sendToTelegram(BOT_TOKEN, CHAT_ID, message);
-
-    // Показываем сообщение пользователю
-    if (isSent) {
-      form.innerHTML = `
-        <div class="text-center py-8">
-          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-            <i class="ri-check-line text-green-600 text-3xl"></i>
-          </div>
-          <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
-          <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
-          <button onclick="this.closest('form').reset(); location.reload()" 
-                  class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
-            Закрыть
-          </button>
-        </div>
-      `;
-    } else {
-      alert('Ошибка отправки. Пожалуйста, позвоните нам напрямую.');
-    }
-  });
-});
-</script>
   </body>
 </html>
