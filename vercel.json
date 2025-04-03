@@ -6,8 +6,10 @@
       "use": "@vercel/node"
     }
   ],
-  "env": {
-    "TELEGRAM_BOT_TOKEN": "7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0",
-    "TELEGRAM_CHAT_ID": "7373169686"
-  }
+  "routes": [
+    {
+      "src": "/api/.*",
+      "dest": "/api/form"
+    }
+  ]
 }
