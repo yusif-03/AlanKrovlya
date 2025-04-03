@@ -1,40 +1,37 @@
-const fetch = require('node-fetch');
-
+// api/form.js
 module.exports = async (req, res) => {
-  if (req.method === 'POST') {
-    const { name, phone, roofType, roofArea, roofComplexity } = req.body;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-    const message = `
-      Новый запрос:
-      Имя: ${name}
-      Телефон: ${phone}
-      Тип кровли: ${roofType}
-      Площадь кровли: ${roofArea}
-      Сложность кровли: ${roofComplexity}
-    `;
+  const { text } = req.body;
 
-    const telegramToken = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';  // Заменить на токен бота
-    const chatId = '7373169686';  // Заменить на ID чата
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' });
+  }
 
-    const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
+  const BOT_TOKEN = process.env.BOT_TOKEN || '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
+  const CHAT_ID = process.env.CHAT_ID || '7373169686';
 
-    try {
-      await fetch(telegramUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: 'HTML',
-        }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: text,
+        parse_mode: 'HTML'
+      }),
+    });
 
-      res.status(200).json({ message: 'Data sent to Telegram' });
-    } catch (error) {
-      console.error('Error sending data to Telegram:', error);
-      res.status(500).json({ message: 'Error sending data' });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.description || 'Telegram API error');
     }
-  } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error sending to Telegram:', error);
+    res.status(500).json({ error: error.message });
   }
 };
