@@ -1509,6 +1509,65 @@
     });
   })();
 </script>
+<script>
+  // Функция для отправки данных в Telegram
+async function sendToTelegram(botToken, chatId, formData) {
+  const text = `📌 Новая заявка с сайта:\n\n${formData}`;
+  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text })
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Ошибка отправки в Telegram:', error);
+    return false;
+  }
+}
+
+// Обработчик для всех форм
+document.querySelectorAll('form').forEach(form => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Собираем данные формы
+    const formData = new FormData(form);
+    let message = '';
+    
+    for (const [key, value] of formData.entries()) {
+      message += `▫️ ${key}: ${value}\n`;
+    }
+
+    // Ваши настройки бота
+    const BOT_TOKEN = 'ВАШ_ТОКЕН'; // Например, '123456:ABC-DEF1234'
+    const CHAT_ID = 'ВАШ_CHAT_ID'; // Например, '123456789'
+
+    // Отправляем в Telegram
+    const isSent = await sendToTelegram(BOT_TOKEN, CHAT_ID, message);
+
+    // Показываем сообщение пользователю
+    if (isSent) {
+      form.innerHTML = `
+        <div class="text-center py-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="ri-check-line text-green-600 text-3xl"></i>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+          <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+          <button onclick="this.closest('form').reset(); location.reload()" 
+                  class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+            Закрыть
+          </button>
+        </div>
+      `;
+    } else {
+      alert('Ошибка отправки. Пожалуйста, позвоните нам напрямую.');
+    }
+  });
+});
+</script>
   </body>
 </html>
