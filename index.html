@@ -36,23 +36,8 @@
         },
       };
     </script>
-    <style>
-      /* Fix for smooth scrolling offset */
-      html {
-        scroll-behavior: smooth;
-      }
-      /* Fix for header height offset */
-      section {
-        scroll-margin-top: 80px;
-      }
-      /* Fix for modal overflow */
-      body.modal-open {
-        overflow: hidden;
-      }
-    </style>
   </head>
   <body class="bg-gray-50 text-gray-800">
-    <!-- Модальное окно деталей услуги -->
     <div
       id="serviceDetailsModal"
       class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
@@ -74,8 +59,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Модальное окно расчета стоимости -->
     <div
       id="costCalculatorModal"
       class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
@@ -172,138 +155,264 @@
         </form>
       </div>
     </div>
-
-    <!-- Модальное окно обратного звонка -->
-    <div
-      id="callbackModal"
-      class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
-    >
-      <div
-        class="bg-blue-100 rounded-lg p-8 max-w-md w-full mx-4 text-gray-800 border border-blue-300"
-      >
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold">Заказать обратный звонок</h3>
-          <button
-            id="closeCallbackModalBtn"
-            class="text-gray-500 hover:text-gray-700"
-          >
-            <i class="ri-close-line text-2xl"></i>
-          </button>
-        </div>
-        <form id="callbackForm">
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackName"
-              >Ваше имя</label
-            >
-            <input
-              type="text"
-              id="callbackName"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackPhone"
-              >Телефон</label
-            >
-            <input
-              type="tel"
-              id="callbackPhone"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="callbackTime"
-              >Удобное время для звонка</label
-            >
-            <select
-              id="callbackTime"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
-            >
-              <option value="asap">Как можно скорее</option>
-              <option value="morning">Утро (9:00 - 12:00)</option>
-              <option value="afternoon">День (12:00 - 15:00)</option>
-              <option value="evening">Вечер (15:00 - 18:00)</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold"
-          >
-            Заказать звонок
-          </button>
-          <p class="text-sm text-gray-500 mt-4 text-center">
-            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-          </p>
-        </form>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Плавная прокрутка для всех навигационных ссылок
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href");
+            const section = this.getAttribute("data-section");
+            if (targetId === "#") {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            } else {
+              const targetElement = document.querySelector(targetId);
+              if (targetElement) {
+                const headerHeight = document.querySelector("header").offsetHeight;
+                const targetPosition =
+                  targetElement.getBoundingClientRect().top +
+                  window.scrollY -
+                  headerHeight;
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: "smooth",
+                });
+              }
+            }
+            // Обновляем активную ссылку
+            setTimeout(() => {
+              document.querySelectorAll(".nav-link").forEach((navLink) => {
+                navLink.classList.remove(
+                  "text-primary",
+                  "border-b-2",
+                  "border-primary",
+                );
+                navLink.classList.add("text-gray-200");
+              });
+              this.classList.remove("text-gray-200");
+              this.classList.add("text-primary", "border-b-2", "border-primary");
+            }, 100);
+          });
+        });
+        // Функция для определения текущего раздела при прокрутке
+        function updateActiveNavLink() {
+          const scrollPosition = window.scrollY;
+          const headerHeight = document.querySelector("header").offsetHeight;
+          const windowHeight = window.innerHeight;
+          const middleOfViewport = scrollPosition + windowHeight / 2;
+          // Определяем, какой раздел сейчас в видимой области
+          const sections = [
+            {
+              id: "home",
+              top: 0,
+              bottom: document.querySelector("#about")?.offsetTop || windowHeight,
+            }, // Верх страницы
+            {
+              id: "about",
+              top: document.querySelector("#about")?.offsetTop || 0,
+              bottom: document.querySelector("#services")?.offsetTop || 0,
+            },
+            {
+              id: "services",
+              top: document.querySelector("#services")?.offsetTop || 0,
+              bottom: document.querySelector("#testimonials")?.offsetTop || 0,
+            },
+            {
+              id: "testimonials",
+              top: document.querySelector("#testimonials")?.offsetTop || 0,
+              bottom: document.querySelector("#contacts")?.offsetTop || 0,
+            },
+            {
+              id: "contacts",
+              top: document.querySelector("#contacts")?.offsetTop || 0,
+              bottom: document.body.scrollHeight,
+            },
+          ];
+          // Находим текущий активный раздел - тот, в котором находится середина экрана
+          let currentSection = "home";
+          for (const section of sections) {
+            if (
+              middleOfViewport >= section.top &&
+              middleOfViewport < section.bottom
+            ) {
+              currentSection = section.id;
+              break;
+            }
+          }
+          // Если мы в самом низу страницы, активируем последний раздел
+          if (scrollPosition + windowHeight >= document.body.scrollHeight - 10) {
+            currentSection = "contacts";
+          }
+          // Обновляем активную ссылку в навигации
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            const section = link.getAttribute("data-section");
+            if (section === currentSection) {
+              if (!link.classList.contains("text-primary")) {
+                link.classList.remove("text-gray-200");
+                link.classList.add("text-primary", "border-b-2", "border-primary");
+              }
+            } else {
+              if (link.classList.contains("text-primary")) {
+                link.classList.remove("text-primary", "border-b-2", "border-primary");
+                link.classList.add("text-gray-200");
+              }
+            }
+          });
+        }
+        // Вызываем функцию при загрузке и при прокрутке
+        setTimeout(updateActiveNavLink, 500); // Увеличиваем задержку для корректной инициализации
+        window.addEventListener("scroll", function () {
+          requestAnimationFrame(updateActiveNavLink);
+        });
+        // Добавляем обработчик изменения размера окна для пересчета позиций секций
+        window.addEventListener("resize", function () {
+          setTimeout(updateActiveNavLink, 500);
+        });
+        // Модальное окно расчета стоимости
+        const calculateCostBtn = document.getElementById("calculateCostBtn");
+        const costCalculatorModal = document.getElementById("costCalculatorModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const costCalculatorForm = document.getElementById("costCalculatorForm");
+        calculateCostBtn.addEventListener("click", function () {
+          costCalculatorModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+        });
+        closeModalBtn.addEventListener("click", function () {
+          costCalculatorModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        });
+        costCalculatorModal.addEventListener("click", function (e) {
+          if (e.target === costCalculatorModal) {
+            costCalculatorModal.classList.add("hidden");
+            document.body.style.overflow = "";
+          }
+        });
+        costCalculatorForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const roofType = document.getElementById("roofType").value;
+          const roofArea = document.getElementById("roofArea").value;
+          const roofComplexity = document.getElementById("roofComplexity").value;
+          const clientName = document.getElementById("clientName").value;
+          const clientPhone = document.getElementById("clientPhone").value;
+          if (!roofType || !roofArea || !clientName || !clientPhone) {
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "text-red-500 mt-4 text-center";
+            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
+            const existingError = costCalculatorForm.querySelector(".text-red-500");
+            if (existingError) {
+              existingError.remove();
+            }
+            costCalculatorForm.appendChild(errorMessage);
+            return;
+          }
+          // Здесь можно добавить отправку данных на сервер
+          // Для демонстрации просто показываем сообщение об успехе
+          costCalculatorForm.innerHTML = `
+      <div class="text-center py-8">
+      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+      <i class="ri-check-line text-green-600 text-3xl"></i>
       </div>
-    </div>
-
-    <!-- Хедер -->
+      <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
+      <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей и предоставления расчета стоимости.</p>
+      <button id="closeSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
+      Закрыть
+      </button>
+      </div>
+      `;
+          document
+            .getElementById("closeSuccessBtn")
+            .addEventListener("click", function () {
+              costCalculatorModal.classList.add("hidden");
+              document.body.style.overflow = "";
+              // Восстанавливаем форму после закрытия
+              setTimeout(() => {
+                costCalculatorForm.innerHTML = `
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="roofType">Тип кровли</label>
+      <select id="roofType" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
+      <option value="">Выберите тип кровли</option>
+      <option value="metal">Металлочерепица (700 ₽/м²)</option>
+      <option value="soft">Мягкая кровля (500 ₽/м²)</option>
+      <option value="soft-garage">Мягкая кровля для гаража/ангара (500 ₽/м²)</option>
+      <option value="bitumen-roll">Рулонные битумные покрытия (200 ₽/м²)</option>
+      <option value="bitumen-polymer">Рулонные битумно-полимерные покрытия (300 ₽/м²)</option>
+      <option value="ondulin">Ондулиновое покрытие (300 ₽/м²)</option>
+      <option value="other">Другое</option>
+      </select>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="roofArea">Площадь кровли (м²)</label>
+      <input type="number" id="roofArea" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="roofComplexity">Сложность кровли</label>
+      <select id="roofComplexity" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
+      <option value="simple">Простая (односкатная)</option>
+      <option value="medium" selected>Средняя (двускатная)</option>
+      <option value="complex">Сложная (многоскатная)</option>
+      </select>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="clientName">Ваше имя</label>
+      <input type="text" id="clientName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="clientPhone">Телефон</label>
+      <input type="tel" id="clientPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+      </div>
+      <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
+      Получить расчет
+      </button>
+      <p class="text-sm text-gray-500 mt-4 text-center">
+      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+      </p>
+      `;
+              }, 300);
+            });
+        });
+      });
+    </script>
     <header class="fixed top-0 left-0 right-0 bg-blue-950 shadow-md z-50">
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-20">
-          <div class="flex items-center">
-            <div
-              class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center"
-            >
-              <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
+        <div class="container mx-auto px-4">
+          <div class="flex items-center justify-between h-20">
+            <!-- Логотип -->
+            <div class="flex items-center">
+              <div class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center">
+                <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
+              </div>
+              <a href="/" class="text-2xl font-['Pacifico'] text-white whitespace-nowrap">Алан-Кровля</a>
             </div>
-            <a href="#home" class="text-3xl font-['Pacifico'] text-white"
-              >Алан-Кровля</a
-            >
-          </div>
-          <nav class="hidden md:flex space-x-8">
-            <a
-              href="#home"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="home"
-              >Главная</a
-            >
-            <a
-              href="#about"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="about"
-              >О компании</a
-            >
-            <a
-              href="#services"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="services"
-              >Услуги</a
-            >
-            <a
-              href="#testimonials"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="testimonials"
-              >Отзывы</a
-            >
-            <a
-              href="#contacts"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="contacts"
-              >Контакты</a
-            >
-          </nav>
-          <div class="flex items-center space-x-4">
-            <a href="tel:+79271661433" class="text-white font-medium"
-              >+7 (927) 166-14-33</a
-            >
-            <button
-              id="headerCallbackBtn"
-              class="bg-primary text-blue-950 px-4 py-2 !rounded-button hover:bg-primary/90 whitespace-nowrap font-semibold"
-            >
-              Заказать звонок
+      
+            <!-- Бургер меню (мобильное) -->
+            <button id="menuToggle" class="text-white text-2xl md:hidden focus:outline-none">
+              <i class="ri-menu-line"></i>
             </button>
+      
+            <!-- Навигация -->
+            <nav id="mobileMenu" class="hidden absolute top-20 left-0 right-0 bg-blue-950 md:static md:flex md:space-x-8 md:bg-transparent md:items-center">
+              <a href="#" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="home">Главная</a>
+              <a href="#services" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="services">Услуги</a>
+              <a href="#projects" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="projects">Проекты</a>
+              <a href="#about" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="about">О компании</a>
+              <a href="#contacts" class="block px-4 py-2 text-gray-200 hover:text-primary nav-link" data-section="contacts">Контакты</a>
+            </nav>
+      
+            <!-- Контакт -->
+            <div class="hidden md:flex items-center space-x-4">
+              <a href="tel:+79271661433" class="text-white font-medium whitespace-nowrap">+7 (927) 166-14-33</a>
+              <button id="headerCallbackBtn" class="bg-primary text-blue-950 px-4 py-2 rounded-button hover:bg-primary/90 font-semibold">
+                Заказать звонок
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-
-    <!-- Основной контент -->
+      </header>
+      
     <main class="pt-20">
-      <!-- Секция героя -->
       <section
         id="home"
         class="hero-section min-h-[600px] flex items-center relative"
@@ -330,8 +439,6 @@
           </div>
         </div>
       </section>
-
-      <!-- О компании -->
       <section id="about" class="py-20 bg-white">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">О компании</h2>
@@ -414,8 +521,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Преимущества -->
       <section class="py-20 bg-blue-200">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">
@@ -469,102 +574,56 @@
           </div>
         </div>
       </section>
-
-      <!-- Услуги -->
       <section id="services" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl font-bold text-center mb-12">Наши услуги</h2>
-          <div class="grid md:grid-cols-4 gap-8">
-            <div
-              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
-            >
-              <img
-                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/132603e46cdfc512a4e0464e51745871.jpeg"
-                alt="Монтаж кровли"
-                class="w-full h-48 object-cover rounded-lg mb-4"
-              />
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            
+            <!-- Монтаж кровли -->
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
+              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/132603e46cdfc512a4e0464e51745871.jpeg" alt="Монтаж кровли" class="w-full h-48 object-cover rounded-lg mb-4">
               <h3 class="text-xl font-semibold mb-2">Монтаж кровли</h3>
-              <p class="text-gray-400 mb-4">
-                Профессиональный монтаж всех видов кровельных материалов
-              </p>
-              <button
-                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
-                data-service="1"
-              >
-                Подробнее
-                <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-500 mb-4">Профессиональный монтаж всех видов кровельных материалов</p>
+              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="1">
+                Подробнее <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-            <div
-              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
-            >
-              <img
-                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/009729d642dc73befa98feb91bfd1163.jpeg"
-                alt="Ремонт кровли"
-                class="w-full h-48 object-cover rounded-lg mb-4"
-              />
+      
+            <!-- Ремонт кровли -->
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
+              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/009729d642dc73befa98feb91bfd1163.jpeg" alt="Ремонт кровли" class="w-full h-48 object-cover rounded-lg mb-4">
               <h3 class="text-xl font-semibold mb-2">Ремонт кровли</h3>
-              <p class="text-gray-500 mb-4">
-                Оперативный ремонт протечек и повреждений любой сложности
-              </p>
-              <button
-                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
-                data-service="2"
-              >
-                Подробнее
-                <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-500 mb-4">Оперативный ремонт протечек и повреждений любой сложности</p>
+              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="2">
+                Подробнее <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-            <div
-              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
-            >
-              <img
-                src="https://public.readdy.ai/ai/img_res/7aa9d3646b8db6c37b58b7cd5d50ed91.jpg"
-                alt="Утепление кровли"
-                class="w-full h-48 object-cover rounded-lg mb-4"
-              />
+      
+            <!-- Утепление кровли -->
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
+              <img src="https://public.readdy.ai/ai/img_res/7aa9d3646b8db6c37b58b7cd5d50ed91.jpg" alt="Утепление кровли" class="w-full h-48 object-cover rounded-lg mb-4">
               <h3 class="text-xl font-semibold mb-2">Утепление кровли</h3>
-              <p class="text-gray-500 mb-4">
-                Современные решения для теплоизоляции вашей крыши
-              </p>
-              <button
-                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
-                data-service="3"
-              >
-                Подробнее
-                <i class="ri-arrow-right-line ml-2"></i>
+              <p class="text-gray-500 mb-4">Современные решения для теплоизоляции вашей крыши</p>
+              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="3">
+                Подробнее <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
-            <div
-              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200"
-            >
-              <img
-                src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/0f4936616c57d76d101cb689fa224d7a.jpeg"
-                alt="Мягкая кровля для гаражей"
-                class="w-full h-48 object-cover rounded-lg mb-4"
-              />
-              <h3 class="text-xl font-semibold mb-2">
-                Мягкая кровля для гаражей и ангаров
-              </h3>
-              <p class="text-gray-500 mb-4">
-                Специализируемся на монтаже мягкой кровли для гаражей, ангаров и
-                хозпостроек. Также устанавливаем заборы из профлиста.
-              </p>
-              <button
-                class="text-primary hover:text-primary/80 flex items-center service-details-btn"
-                data-service="4"
-              >
-                Подробнее
-                <i class="ri-arrow-right-line ml-2"></i>
+      
+            <!-- Мягкая кровля -->
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-blue-200">
+              <img src="https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/0f4936616c57d76d101cb689fa224d7a.jpeg" alt="Мягкая кровля для гаражей" class="w-full h-48 object-cover rounded-lg mb-4">
+              <h3 class="text-xl font-semibold mb-2">Мягкая кровля для гаражей и ангаров</h3>
+              <p class="text-gray-500 mb-4">Специализируемся на монтаже мягкой кровли для гаражей, ангаров и хозпостроек</p>
+              <button class="text-primary hover:text-primary/80 flex items-center service-details-btn" data-service="4">
+                Подробнее <i class="ri-arrow-right-line ml-2"></i>
               </button>
             </div>
+      
           </div>
         </div>
       </section>
-
-      <!-- Отзывы -->
-      <section
-        id="testimonials"
+      
+       <section id="testimonials"
         class="py-20 bg-blue-200"
         data-section="testimonials"
       >
@@ -656,8 +715,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Контакты -->
       <section id="contacts" class="py-20 bg-gray-100">
         <div class="container mx-auto px-4">
           <div class="max-w-2xl mx-auto">
@@ -665,7 +722,6 @@
               Получить бесплатную консультацию
             </h2>
             <form
-              id="contactForm"
               class="bg-white p-8 rounded-lg shadow-md border border-blue-200"
             >
               <div class="mb-6">
@@ -740,8 +796,6 @@
         </div>
       </section>
     </main>
-
-    <!-- Футер -->
     <footer class="bg-blue-950 text-white py-12">
       <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-4 gap-8">
@@ -810,8 +864,6 @@
         </div>
       </div>
     </footer>
-
-    <!-- Плавающие кнопки -->
     <div class="fixed bottom-8 right-8 flex flex-col space-y-4">
       <a
         href="https://wa.me/message/GNNXLNFM62NTI1"
@@ -841,259 +893,89 @@
         <i class="ri-phone-line text-xl"></i>
       </button>
     </div>
-
-    <!-- Скрипты -->
+    <div
+      id="callbackModal"
+      class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
+    >
+      <div
+        class="bg-blue-100 rounded-lg p-8 max-w-md w-full mx-4 text-gray-800 border border-blue-300"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold">Заказать обратный звонок</h3>
+          <button
+            id="closeCallbackModalBtn"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+        </div>
+        <form id="callbackForm">
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackName"
+              >Ваше имя</label
+            >
+            <input
+              type="text"
+              id="callbackName"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackPhone"
+              >Телефон</label
+            >
+            <input
+              type="tel"
+              id="callbackPhone"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2" for="callbackTime"
+              >Удобное время для звонка</label
+            >
+            <select
+              id="callbackTime"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300"
+            >
+              <option value="asap">Как можно скорее</option>
+              <option value="morning">Утро (9:00 - 12:00)</option>
+              <option value="afternoon">День (12:00 - 15:00)</option>
+              <option value="evening">Вечер (15:00 - 18:00)</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold"
+          >
+            Заказать звонок
+          </button>
+          <p class="text-sm text-gray-500 mt-4 text-center">
+            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+          </p>
+        </form>
+      </div>
+    </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Улучшенная обработка форм и Telegram-бота
-        const BOT_TOKEN = "7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0";
-        const CHAT_ID = "7373169686";
-        let lastSubmissionTime = 0;
-
-        // Улучшенная функция отправки в Telegram
-        async function sendToTelegram(message, formType) {
-          // Проверка времени между отправками (не чаще 1 раза в 10 секунд)
-          const now = Date.now();
-          if (now - lastSubmissionTime < 10000) {
-            throw new Error("Пожалуйста, не отправляйте формы так часто");
-          }
-          lastSubmissionTime = now;
-
-          const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-          
-          try {
-            const response = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: "HTML"
-              }),
-            });
-            
-            const data = await response.json();
-            
-            if (!response.ok) {
-              console.error("Ошибка Telegram API:", data);
-              throw new Error("Ошибка отправки сообщения в Telegram");
-            }
-            
-            return true;
-          } catch (error) {
-            console.error("Ошибка сети:", error);
-            throw error;
-          }
-        }
-
-        // Функция для форматирования данных формы
-        function formatFormData(formData, formType) {
-          const types = {
-            'costCalculatorForm': '📊 <b>Запрос расчета стоимости</b>',
-            'callbackForm': '📞 <b>Заказ обратного звонка</b>',
-            'contactForm': '📩 <b>Контактная форма</b>',
-            'serviceForm': '🛠️ <b>Заказ услуги</b>'
-          };
-          
-          let message = `${types[formType] || '📢 <b>Новая заявка</b>'}\n\n`;
-          const fieldNames = {
-            'roofType': 'Тип кровли',
-            'roofArea': 'Площадь кровли (м²)',
-            'roofComplexity': 'Сложность кровли',
-            'clientName': 'Имя',
-            'clientPhone': 'Телефон',
-            'callbackName': 'Имя',
-            'callbackPhone': 'Телефон',
-            'callbackTime': 'Удобное время',
-            'name': 'Имя',
-            'phone': 'Телефон',
-            'service': 'Тип кровли',
-            'message': 'Комментарий'
-          };
-          
-          for (const [key, value] of formData.entries()) {
-            if (value) {
-              const fieldName = fieldNames[key] || key;
-              message += `▫️ <b>${fieldName}</b>: ${value}\n`;
-            }
-          }
-          
-          // Добавляем дату и время
-          message += `\n⏱ <i>${new Date().toLocaleString()}</i>`;
-          
-          return message;
-        }
-
-        // Общая функция обработки форм
-        async function handleFormSubmit(e, formType) {
-          e.preventDefault();
-          
-          const form = e.target;
-          const submitBtn = form.querySelector('button[type="submit"]');
-          const originalBtnText = submitBtn.innerHTML;
-          
-          // Валидация телефона
-          const phoneInput = form.querySelector('input[type="tel"]');
-          if (phoneInput && !/^[\d\+\(\)\s-]{10,}$/.test(phoneInput.value)) {
-            alert('Пожалуйста, введите корректный номер телефона');
-            return;
-          }
-          
-          // Блокируем кнопку на время отправки
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Отправка...';
-          
-          try {
-            const formData = new FormData(form);
-            const message = formatFormData(formData, formType);
-            
-            await sendToTelegram(message, formType);
-            
-            // Показываем сообщение об успехе
-            form.innerHTML = `
-              <div class="text-center py-8">
-                <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                  <i class="ri-check-line text-green-600 text-3xl"></i>
-                </div>
-                <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
-                <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
-                <button onclick="location.reload()" class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
-                  Закрыть
-                </button>
-              </div>
-            `;
-          } catch (error) {
-            console.error('Ошибка:', error);
-            alert(error.message || 'Произошла ошибка при отправке. Пожалуйста, попробуйте позже или позвоните нам.');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
-          }
-        }
-
-        // Инициализация форм
-        document.getElementById('costCalculatorForm')?.addEventListener('submit', (e) => handleFormSubmit(e, 'costCalculatorForm'));
-        document.getElementById('callbackForm')?.addEventListener('submit', (e) => handleFormSubmit(e, 'callbackForm'));
-        document.getElementById('contactForm')?.addEventListener('submit', (e) => handleFormSubmit(e, 'contactForm'));
-
-        // Плавная прокрутка для всех навигационных ссылок
-        const navLinks = document.querySelectorAll('nav a[href^="#"]');
-        navLinks.forEach((link) => {
-          link.addEventListener("click", function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute("href");
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-              targetElement.scrollIntoView({
-                behavior: "smooth"
-              });
-            }
-            // Обновляем активную ссылку
-            setTimeout(() => {
-              document.querySelectorAll(".nav-link").forEach((navLink) => {
-                navLink.classList.remove(
-                  "text-primary",
-                  "border-b-2",
-                  "border-primary",
-                );
-                navLink.classList.add("text-gray-200");
-              });
-              this.classList.remove("text-gray-200");
-              this.classList.add("text-primary", "border-b-2", "border-primary");
-            }, 100);
-          });
-        });
-
-        // Функция для определения текущего раздела при прокрутке
-        function updateActiveNavLink() {
-          const scrollPosition = window.scrollY;
-          const headerHeight = document.querySelector("header").offsetHeight;
-          const windowHeight = window.innerHeight;
-          const middleOfViewport = scrollPosition + windowHeight / 2;
-          
-          const sections = [
-            { id: "home", top: 0, bottom: document.querySelector("#about")?.offsetTop || windowHeight },
-            { id: "about", top: document.querySelector("#about")?.offsetTop || 0, bottom: document.querySelector("#services")?.offsetTop || 0 },
-            { id: "services", top: document.querySelector("#services")?.offsetTop || 0, bottom: document.querySelector("#testimonials")?.offsetTop || 0 },
-            { id: "testimonials", top: document.querySelector("#testimonials")?.offsetTop || 0, bottom: document.querySelector("#contacts")?.offsetTop || 0 },
-            { id: "contacts", top: document.querySelector("#contacts")?.offsetTop || 0, bottom: document.body.scrollHeight },
-          ];
-          
-          let currentSection = "home";
-          for (const section of sections) {
-            if (middleOfViewport >= section.top && middleOfViewport < section.bottom) {
-              currentSection = section.id;
-              break;
-            }
-          }
-          
-          if (scrollPosition + windowHeight >= document.body.scrollHeight - 10) {
-            currentSection = "contacts";
-          }
-          
-          document.querySelectorAll(".nav-link").forEach((link) => {
-            const section = link.getAttribute("data-section");
-            if (section === currentSection) {
-              if (!link.classList.contains("text-primary")) {
-                link.classList.remove("text-gray-200");
-                link.classList.add("text-primary", "border-b-2", "border-primary");
-              }
-            } else {
-              if (link.classList.contains("text-primary")) {
-                link.classList.remove("text-primary", "border-b-2", "border-primary");
-                link.classList.add("text-gray-200");
-              }
-            }
-          });
-        }
-
-        // Инициализация обновления активной ссылки
-        setTimeout(updateActiveNavLink, 500);
-        window.addEventListener("scroll", function () {
-          requestAnimationFrame(updateActiveNavLink);
-        });
-        window.addEventListener("resize", function () {
-          setTimeout(updateActiveNavLink, 500);
-        });
-
-        // Модальное окно расчета стоимости
-        const calculateCostBtn = document.getElementById("calculateCostBtn");
-        const costCalculatorModal = document.getElementById("costCalculatorModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
-        
-        function openCostCalculatorModal() {
-          costCalculatorModal.classList.remove("hidden");
-          document.body.classList.add("modal-open");
-        }
-        
-        function closeCostCalculatorModal() {
-          costCalculatorModal.classList.add("hidden");
-          document.body.classList.remove("modal-open");
-        }
-        
-        calculateCostBtn.addEventListener("click", openCostCalculatorModal);
-        closeModalBtn.addEventListener("click", closeCostCalculatorModal);
-        costCalculatorModal.addEventListener("click", function (e) {
-          if (e.target === costCalculatorModal) {
-            closeCostCalculatorModal();
-          }
-        });
-
-        // Модальное окно обратного звонка
+        // Обработчики для модального окна обратного звонка
         const callbackBtn = document.getElementById("callbackBtn");
         const headerCallbackBtn = document.getElementById("headerCallbackBtn");
         const callbackModal = document.getElementById("callbackModal");
-        const closeCallbackModalBtn = document.getElementById("closeCallbackModalBtn");
-        
+        const closeCallbackModalBtn = document.getElementById(
+          "closeCallbackModalBtn",
+        );
+        const callbackForm = document.getElementById("callbackForm");
         function openCallbackModal() {
           callbackModal.classList.remove("hidden");
-          document.body.classList.add("modal-open");
+          document.body.style.overflow = "hidden";
         }
-        
         function closeCallbackModal() {
           callbackModal.classList.add("hidden");
-          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
         }
-        
         callbackBtn.addEventListener("click", openCallbackModal);
         headerCallbackBtn.addEventListener("click", openCallbackModal);
         closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
@@ -1102,18 +984,80 @@
             closeCallbackModal();
           }
         });
-
+        callbackForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const callbackName = document.getElementById("callbackName").value;
+          const callbackPhone = document.getElementById("callbackPhone").value;
+          if (!callbackName || !callbackPhone) {
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "text-red-500 mt-4 text-center";
+            errorMessage.textContent = "Пожалуйста, заполните все обязательные поля";
+            const existingError = callbackForm.querySelector(".text-red-500");
+            if (existingError) {
+              existingError.remove();
+            }
+            callbackForm.appendChild(errorMessage);
+            return;
+          }
+          // Здесь можно добавить отправку данных на сервер
+          // Для демонстрации просто показываем сообщение об успехе
+          callbackForm.innerHTML = `
+      <div class="text-center py-8">
+      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+      <i class="ri-check-line text-green-600 text-3xl"></i>
+      </div>
+      <h4 class="text-xl font-semibold mb-2">Спасибо за заявку!</h4>
+      <p class="text-gray-600 mb-6">Мы перезвоним вам в ближайшее время.</p>
+      <button id="closeCallbackSuccessBtn" class="bg-primary text-blue-950 px-6 py-2 !rounded-button hover:bg-primary/90 font-semibold">
+      Закрыть
+      </button>
+      </div>
+      `;
+          document
+            .getElementById("closeCallbackSuccessBtn")
+            .addEventListener("click", function () {
+              closeCallbackModal();
+              // Восстанавливаем форму после закрытия
+              setTimeout(() => {
+                callbackForm.innerHTML = `
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="callbackName">Ваше имя</label>
+      <input type="text" id="callbackName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="callbackPhone">Телефон</label>
+      <input type="tel" id="callbackPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-800 border-gray-300" required>
+      </div>
+      <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="callbackTime">Удобное время для звонка</label>
+      <select id="callbackTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-8 bg-white text-gray-800 border-gray-300">
+      <option value="asap">Как можно скорее</option>
+      <option value="morning">Утро (9:00 - 12:00)</option>
+      <option value="afternoon">День (12:00 - 15:00)</option>
+      <option value="evening">Вечер (15:00 - 18:00)</option>
+      </select>
+      </div>
+      <button type="submit" class="w-full bg-primary text-blue-950 py-3 !rounded-button hover:bg-primary/90 font-semibold">
+      Заказать звонок
+      </button>
+      <p class="text-sm text-gray-500 mt-4 text-center">
+      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+      </p>
+      `;
+              }, 300);
+            });
+        });
         // Модальное окно для подробностей об услугах
         const serviceDetailsModal = document.getElementById("serviceDetailsModal");
         const closeServiceModalBtn = document.getElementById("closeServiceModalBtn");
         const serviceTitle = document.getElementById("serviceTitle");
         const serviceContent = document.getElementById("serviceContent");
-        
         // Данные услуг
         const servicesData = {
           1: {
             title: "Монтаж кровли",
-            description: "Профессиональный монтаж всех видов кровельных материалов с соблюдением технологий и стандартов качества. Наша компания специализируется на установке различных типов кровли для частных домов, коммерческих и промышленных объектов с 2010 года.",
+            description:
+              "Профессиональный монтаж всех видов кровельных материалов с соблюдением технологий и стандартов качества. Наша компания специализируется на установке различных типов кровли для частных домов, коммерческих и промышленных объектов с 2010 года.",
             materials: [
               "Пленочная кровля",
               "Листовая кровля",
@@ -1148,13 +1092,14 @@
             price: "от 700 руб/м²",
             timeframe: "от 5 дней в зависимости от площади и сложности",
             images: [
-              "https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/32c6bf97873206731533b42c6e58d537.jpeg",
+              "https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/132603e46cdfc512a4e0464e51745871.jpeg",
               "https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/6683bea4a40493668b2dd02c4d4b8139.jpeg",
             ],
           },
           2: {
             title: "Ремонт кровли",
-            description: "Оперативный и качественный ремонт кровли любой сложности. Устраняем протечки, повреждения и дефекты кровельного покрытия с гарантией результата.",
+            description:
+              "Оперативный и качественный ремонт кровли любой сложности. Устраняем протечки, повреждения и дефекты кровельного покрытия с гарантией результата.",
             problems: [
               "Протечки и затекания",
               "Повреждения кровельного покрытия",
@@ -1185,7 +1130,8 @@
           },
           3: {
             title: "Утепление кровли",
-            description: "Современные решения для теплоизоляции вашей крыши, которые помогут сократить расходы на отопление и создать комфортный микроклимат в доме.",
+            description:
+              "Современные решения для теплоизоляции вашей крыши, которые помогут сократить расходы на отопление и создать комфортный микроклимат в доме.",
             materials: [
               "Минеральная вата",
               "Пенополистирол",
@@ -1217,7 +1163,8 @@
           },
           4: {
             title: "Мягкая кровля для гаражей и ангаров",
-            description: "Специализированные решения для монтажа мягкой кровли на гаражах, ангарах и хозяйственных постройках. Надежная защита от протечек и долговечность эксплуатации. Также занимаемся установкой заборов из профлиста.",
+            description:
+              "Специализированные решения для монтажа мягкой кровли на гаражах, ангарах и хозяйственных постройках. Надежная защита от протечек и долговечность эксплуатации. Также занимаемся установкой заборов из профлиста.",
             materials: [
               "Рулонные битумные материалы (Технониколь, Биполь, Унифлекс)",
               "Высокопрочные битумно-полимерные материалы",
@@ -1256,143 +1203,146 @@
             ],
           },
         };
-
         function openServiceModal(serviceId) {
           const service = servicesData[serviceId];
           if (!service) return;
-          
           serviceTitle.textContent = service.title;
           let content = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              ${service.images.map(img => `
-                <div>
-                  <img src="${img}" alt="${service.title}" class="w-full h-64 object-cover rounded-lg">
-                </div>
-              `).join('')}
-            </div>
-            <div class="mb-6">
-              <h4 class="text-xl font-semibold mb-2">Описание услуги</h4>
-              <p class="text-gray-600">${service.description}</p>
-            </div>
-          `;
-
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      ${service.images
+        .map((img, index) => {
+          // Заменяем URL изображений на URL без русского текста
+          let newImg = img;
+          if (img.includes("query=")) {
+            newImg = img.replace(
+              /query=([^&]+)/,
+              "query=$1, professional quality photography, high resolution",
+            );
+          }
+          // Заменяем первое изображение для услуги с id=1
+          if (index === 0 && serviceId === "1") {
+            newImg =
+              "https://static.readdy.ai/image/182d7354276658ca01c1223de265a3c0/32c6bf97873206731533b42c6e58d537.jpeg";
+          }
+          return `
+      <div>
+      <img src="${newImg}" alt="${service.title}" class="w-full h-64 object-cover rounded-lg">
+      </div>
+      `;
+        })
+        .join("")}
+      </div>
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Описание услуги</h4>
+      <p class="text-gray-600">${service.description}</p>
+      </div>
+      `;
           if (service.materials) {
             content += `
-              <div class="mb-6">
-                <h4 class="text-xl font-semibold mb-2">Используемые материалы</h4>
-                <ul class="list-disc pl-5 text-gray-600">
-                  ${service.materials.map(material => `<li>${material}</li>`).join('')}
-                </ul>
-              </div>
-            `;
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Используемые материалы</h4>
+      <ul class="list-disc pl-5 text-gray-600">
+      ${service.materials.map((material) => `<li>${material}</li>`).join("")}
+      </ul>
+      </div>
+      `;
           }
-
           if (service.process) {
             content += `
-              <div class="mb-6">
-                <h4 class="text-xl font-semibold mb-2">Этапы работ</h4>
-                <ol class="list-decimal pl-5 text-gray-600">
-                  ${service.process.map(step => `<li>${step}</li>`).join('')}
-                </ol>
-              </div>
-            `;
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Этапы работ</h4>
+      <ol class="list-decimal pl-5 text-gray-600">
+      ${service.process.map((step) => `<li>${step}</li>`).join("")}
+      </ol>
+      </div>
+      `;
           }
-
           if (service.problems) {
             content += `
-              <div class="mb-6">
-                <h4 class="text-xl font-semibold mb-2">Решаемые проблемы</h4>
-                <ul class="list-disc pl-5 text-gray-600">
-                  ${service.problems.map(problem => `<li>${problem}</li>`).join('')}
-                </ul>
-              </div>
-            `;
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Решаемые проблемы</h4>
+      <ul class="list-disc pl-5 text-gray-600">
+      ${service.problems.map((problem) => `<li>${problem}</li>`).join("")}
+      </ul>
+      </div>
+      `;
           }
-
           if (service.solutions) {
             content += `
-              <div class="mb-6">
-                <h4 class="text-xl font-semibold mb-2">Наши решения</h4>
-                <ul class="list-disc pl-5 text-gray-600">
-                  ${service.solutions.map(solution => `<li>${solution}</li>`).join('')}
-                </ul>
-              </div>
-            `;
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Наши решения</h4>
+      <ul class="list-disc pl-5 text-gray-600">
+      ${service.solutions.map((solution) => `<li>${solution}</li>`).join("")}
+      </ul>
+      </div>
+      `;
           }
-
           if (service.benefits) {
             content += `
-              <div class="mb-6">
-                <h4 class="text-xl font-semibold mb-2">Преимущества</h4>
-                <ul class="list-disc pl-5 text-gray-600">
-                  ${service.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
-                </ul>
-              </div>
-            `;
+      <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">Преимущества</h4>
+      <ul class="list-disc pl-5 text-gray-600">
+      ${service.benefits.map((benefit) => `<li>${benefit}</li>`).join("")}
+      </ul>
+      </div>
+      `;
           }
-
           content += `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-              <div>
-                <h4 class="text-xl font-semibold mb-2">Стоимость</h4>
-                <p class="text-gray-600">${service.price}</p>
-              </div>
-              <div>
-                <h4 class="text-xl font-semibold mb-2">Сроки выполнения</h4>
-                <p class="text-gray-600">${service.timeframe}</p>
-              </div>
-            </div>
-            <div class="mt-8 flex flex-wrap gap-4">
-              <button id="orderServiceBtn" class="bg-primary text-blue-950 px-6 py-3 !rounded-button hover:bg-primary/90 font-semibold">
-                Заказать услугу
-              </button>
-              <button id="calculateServiceCostBtn" class="bg-secondary text-white px-6 py-3 !rounded-button hover:bg-secondary/90 font-semibold">
-                Рассчитать стоимость
-              </button>
-            </div>
-          `;
-
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+      <div>
+      <h4 class="text-xl font-semibold mb-2">Стоимость</h4>
+      <p class="text-gray-600">${service.price}</p>
+      </div>
+      <div>
+      <h4 class="text-xl font-semibold mb-2">Сроки выполнения</h4>
+      <p class="text-gray-600">${service.timeframe}</p>
+      </div>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-4">
+      <button id="orderServiceBtn" class="bg-primary text-blue-950 px-6 py-3 !rounded-button hover:bg-primary/90 font-semibold">
+      Заказать услугу
+      </button>
+      <button id="calculateServiceCostBtn" class="bg-secondary text-white px-6 py-3 !rounded-button hover:bg-secondary/90 font-semibold">
+      Рассчитать стоимость
+      </button>
+      </div>
+      `;
           serviceContent.innerHTML = content;
-          
           // Добавляем обработчики для кнопок
-          document.getElementById("orderServiceBtn").addEventListener("click", function() {
-            serviceDetailsModal.classList.add("hidden");
-            document.body.classList.remove("modal-open");
-            callbackModal.classList.remove("hidden");
-            document.body.classList.add("modal-open");
-          });
-          
-          document.getElementById("calculateServiceCostBtn").addEventListener("click", function() {
-            serviceDetailsModal.classList.add("hidden");
-            document.body.classList.remove("modal-open");
-            costCalculatorModal.classList.remove("hidden");
-            document.body.classList.add("modal-open");
-          });
-          
+          document
+            .getElementById("orderServiceBtn")
+            .addEventListener("click", function () {
+              closeServiceModal();
+              openCallbackModal();
+            });
+          document
+            .getElementById("calculateServiceCostBtn")
+            .addEventListener("click", function () {
+              closeServiceModal();
+              document.getElementById("calculateCostBtn").click();
+            });
           serviceDetailsModal.classList.remove("hidden");
-          document.body.classList.add("modal-open");
+          document.body.style.overflow = "hidden";
         }
-
         function closeServiceModal() {
           serviceDetailsModal.classList.add("hidden");
-          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
         }
-
         // Добавляем обработчики для кнопок "Подробнее" в разделе услуг
-        document.querySelectorAll(".service-details-btn").forEach(btn => {
-          btn.addEventListener("click", function() {
+        document.querySelectorAll(".service-details-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
             const serviceId = this.getAttribute("data-service");
             openServiceModal(serviceId);
           });
         });
-
         closeServiceModalBtn.addEventListener("click", closeServiceModal);
-        serviceDetailsModal.addEventListener("click", function(e) {
+        serviceDetailsModal.addEventListener("click", function (e) {
           if (e.target === serviceDetailsModal) {
             closeServiceModal();
           }
         });
       });
     </script>
+    
   </body>
 </html>
