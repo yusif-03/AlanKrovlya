@@ -1,6 +1,12 @@
 {
+  "name": "alan-krovlya",
+  "version": "1.0.0",
   "dependencies": {
     "telegraf": "^4.12.2",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.0.3"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
