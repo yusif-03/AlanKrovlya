@@ -36,6 +36,20 @@
         },
       };
     </script>
+    <style>
+      /* Fix for smooth scrolling offset */
+      html {
+        scroll-behavior: smooth;
+      }
+      /* Fix for header height offset */
+      section {
+        scroll-margin-top: 80px;
+      }
+      /* Fix for modal overflow */
+      body.modal-open {
+        overflow: hidden;
+      }
+    </style>
   </head>
   <body class="bg-gray-50 text-gray-800">
     <!-- Модальное окно деталей услуги -->
@@ -967,25 +981,11 @@
           link.addEventListener("click", function (e) {
             e.preventDefault();
             const targetId = this.getAttribute("href");
-            const section = this.getAttribute("data-section");
-            if (targetId === "#") {
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth"
               });
-            } else {
-              const targetElement = document.querySelector(targetId);
-              if (targetElement) {
-                const headerHeight = document.querySelector("header").offsetHeight;
-                const targetPosition =
-                  targetElement.gettingClientRect().top +
-                  window.scrollY -
-                  headerHeight;
-                window.scrollTo({
-                  top: targetPosition,
-                  behavior: "smooth",
-                });
-              }
             }
             // Обновляем активную ссылку
             setTimeout(() => {
@@ -1059,18 +1059,22 @@
         const calculateCostBtn = document.getElementById("calculateCostBtn");
         const costCalculatorModal = document.getElementById("costCalculatorModal");
         const closeModalBtn = document.getElementById("closeModalBtn");
-        calculateCostBtn.addEventListener("click", function () {
+        
+        function openCostCalculatorModal() {
           costCalculatorModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        });
-        closeModalBtn.addEventListener("click", function () {
+          document.body.classList.add("modal-open");
+        }
+        
+        function closeCostCalculatorModal() {
           costCalculatorModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        });
+          document.body.classList.remove("modal-open");
+        }
+        
+        calculateCostBtn.addEventListener("click", openCostCalculatorModal);
+        closeModalBtn.addEventListener("click", closeCostCalculatorModal);
         costCalculatorModal.addEventListener("click", function (e) {
           if (e.target === costCalculatorModal) {
-            costCalculatorModal.classList.add("hidden");
-            document.body.style.overflow = "";
+            closeCostCalculatorModal();
           }
         });
 
@@ -1079,22 +1083,23 @@
         const headerCallbackBtn = document.getElementById("headerCallbackBtn");
         const callbackModal = document.getElementById("callbackModal");
         const closeCallbackModalBtn = document.getElementById("closeCallbackModalBtn");
-        callbackBtn.addEventListener("click", function () {
+        
+        function openCallbackModal() {
           callbackModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        });
-        headerCallbackBtn.addEventListener("click", function () {
-          callbackModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        });
-        closeCallbackModalBtn.addEventListener("click", function () {
+          document.body.classList.add("modal-open");
+        }
+        
+        function closeCallbackModal() {
           callbackModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        });
+          document.body.classList.remove("modal-open");
+        }
+        
+        callbackBtn.addEventListener("click", openCallbackModal);
+        headerCallbackBtn.addEventListener("click", openCallbackModal);
+        closeCallbackModalBtn.addEventListener("click", closeCallbackModal);
         callbackModal.addEventListener("click", function (e) {
           if (e.target === callbackModal) {
-            callbackModal.classList.add("hidden");
-            document.body.style.overflow = "";
+            closeCallbackModal();
           }
         });
 
@@ -1352,25 +1357,25 @@
           // Добавляем обработчики для кнопок
           document.getElementById("orderServiceBtn").addEventListener("click", function() {
             serviceDetailsModal.classList.add("hidden");
-            document.body.style.overflow = "";
+            document.body.classList.remove("modal-open");
             callbackModal.classList.remove("hidden");
-            document.body.style.overflow = "hidden";
+            document.body.classList.add("modal-open");
           });
           
           document.getElementById("calculateServiceCostBtn").addEventListener("click", function() {
             serviceDetailsModal.classList.add("hidden");
-            document.body.style.overflow = "";
+            document.body.classList.remove("modal-open");
             costCalculatorModal.classList.remove("hidden");
-            document.body.style.overflow = "hidden";
+            document.body.classList.add("modal-open");
           });
           
           serviceDetailsModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
+          document.body.classList.add("modal-open");
         }
 
         function closeServiceModal() {
           serviceDetailsModal.classList.add("hidden");
-          document.body.style.overflow = "";
+          document.body.classList.remove("modal-open");
         }
 
         // Добавляем обработчики для кнопок "Подробнее" в разделе услуг
