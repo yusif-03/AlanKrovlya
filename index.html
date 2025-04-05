@@ -943,39 +943,49 @@ if (callbackForm) {
 
 
         // Обработчик формы контактов
-        const contactForm = document.getElementById("contactForm");
-        if (contactForm) {
-          contactForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(contactForm);
-            let message = "📩 <b>Новая заявка с сайта</b>\n";
-            
-            for (const [key, value] of formData.entries()) {
-              if (value) message += `▫️ ${key}: ${value}\n`;
-            }
+       const contactForm = document.getElementById("contactForm");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-            const isSent = await sendToTelegram(message);
+    const payload = {
+      name: document.getElementById("name").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      service: document.getElementById("service").value,
+      message: document.getElementById("message").value.trim(),
+      source: "contact",
+    };
 
-            if (isSent) {
-              contactForm.innerHTML = `
-                <div class="text-center py-8">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="ri-check-line text-green-600 text-3xl"></i>
-                  </div>
-                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
-                  <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
-                  <button onclick="location.reload()" 
-                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
-                    Закрыть
-                  </button>
-                </div>
-              `;
-            } else {
-              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
-            }
-          });
-        }
+    try {
+      const res = await fetch("/api/form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        contactForm.innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="ri-check-line text-green-600 text-3xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+            <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+            <button onclick="location.reload()" 
+                    class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+              Закрыть
+            </button>
+          </div>`;
+      } else {
+        alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+    }
+  });
+}
+
 
         // Плавная прокрутка для всех навигационных ссылок
         const navLinks = document.querySelectorAll('nav a[href^="#"]');
