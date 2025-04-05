@@ -856,38 +856,47 @@
 
         // Обработчик формы расчета стоимости
         const costCalculatorForm = document.getElementById("costCalculatorForm");
-        if (costCalculatorForm) {
-          costCalculatorForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(costCalculatorForm);
-            let message = "📊 <b>Запрос расчета стоимости</b>\n";
-            
-            for (const [key, value] of formData.entries()) {
-              if (value) message += `▫️ ${key}: ${value}\n`;
-            }
+if (costCalculatorForm) {
+  costCalculatorForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-            const isSent = await sendToTelegram(message);
+    const payload = {
+      name: document.getElementById("clientName").value.trim(),
+      phone: document.getElementById("clientPhone").value.trim(),
+      service: document.getElementById("roofType").value,
+      message: `Площадь: ${document.getElementById("roofArea").value} м²\nСложность: ${document.getElementById("roofComplexity").value}`,
+      source: "cost",
+    };
 
-            if (isSent) {
-              costCalculatorForm.innerHTML = `
-                <div class="text-center py-8">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="ri-check-line text-green-600 text-3xl"></i>
-                  </div>
-                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
-                  <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей.</p>
-                  <button onclick="document.getElementById('costCalculatorModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
-                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
-                    Закрыть
-                  </button>
-                </div>
-              `;
-            } else {
-              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
-            }
-          });
-        }
+    try {
+      const res = await fetch("/api/form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        costCalculatorForm.innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="ri-check-line text-green-600 text-3xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+            <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для уточнения деталей.</p>
+            <button onclick="document.getElementById('costCalculatorModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
+                    class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+              Закрыть
+            </button>
+          </div>`;
+      } else {
+        alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+    }
+  });
+}
 
         // Обработчик формы обратного звонка
         const callbackForm = document.getElementById("callbackForm");
