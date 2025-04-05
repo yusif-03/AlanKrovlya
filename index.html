@@ -891,45 +891,47 @@
 
         // Обработчик формы обратного звонка
         const callbackForm = document.getElementById("callbackForm");
-        if (callbackForm) {
-          callbackForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const payload = {
-  name: document.getElementById("callbackName").value,
-  phone: document.getElementById("callbackPhone").value,
-  time: document.getElementById("callbackTime").value,
-  source: "callback", // чтобы различать формы
-};
+if (callbackForm) {
+  callbackForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const response = await fetch("/api/form", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
+    const payload = {
+      name: document.getElementById("callbackName").value.trim(),
+      phone: document.getElementById("callbackPhone").value.trim(),
+      time: document.getElementById("callbackTime").value,
+      source: "callback",
+    };
 
-const isSent = response.ok;
+    try {
+      const res = await fetch("/api/form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
+      if (res.ok) {
+        callbackForm.innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="ri-check-line text-green-600 text-3xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
+            <p class="text-gray-600 mb-6">Мы перезвоним вам в указанное время.</p>
+            <button onclick="document.getElementById('callbackModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
+                    class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
+              Закрыть
+            </button>
+          </div>`;
+      } else {
+        alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
+    }
+  });
+}
 
-            if (isSent) {
-              callbackForm.innerHTML = `
-                <div class="text-center py-8">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="ri-check-line text-green-600 text-3xl"></i>
-                  </div>
-                  <h4 class="text-xl font-semibold mb-2">Спасибо!</h4>
-                  <p class="text-gray-600 mb-6">Мы перезвоним вам в указанное время.</p>
-                  <button onclick="document.getElementById('callbackModal').classList.add('hidden'); document.body.style.overflow = ''; location.reload()" 
-                          class="bg-primary text-blue-950 px-6 py-2 rounded-lg hover:bg-primary/90 font-semibold">
-                    Закрыть
-                  </button>
-                </div>
-              `;
-            } else {
-              alert("Ошибка отправки. Пожалуйста, позвоните нам напрямую.");
-            }
-          });
-        }
 
         // Обработчик формы контактов
         const contactForm = document.getElementById("contactForm");
