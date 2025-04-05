@@ -895,14 +895,21 @@
           callbackForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             
-            const formData = new FormData(callbackForm);
-            let message = "📞 <b>Заказ обратного звонка</b>\n";
-            
-            for (const [key, value] of formData.entries()) {
-              if (value) message += `▫️ ${key}: ${value}\n`;
-            }
+            const payload = {
+  name: document.getElementById("callbackName").value,
+  phone: document.getElementById("callbackPhone").value,
+  time: document.getElementById("callbackTime").value,
+  source: "callback", // чтобы различать формы
+};
 
-            const isSent = await sendToTelegram(message);
+const response = await fetch("/api/form", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
+
+const isSent = response.ok;
+
 
             if (isSent) {
               callbackForm.innerHTML = `
