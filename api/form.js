@@ -1,5 +1,5 @@
 // First install node-fetch: npm install node-fetch
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 module.exports = async (req, res) => {
   // CORS
