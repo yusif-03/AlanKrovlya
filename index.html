@@ -833,24 +833,6 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         
-        // Функция для отправки данных в Telegram
-        async function sendToTelegram(formData) {
-          const text = `📌 Новая заявка с сайта:\n\n${formData}`;
-          const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
-          try {
-            const response = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ chat_id: CHAT_ID, text }),
-            });
-            return response.ok;
-          } catch (error) {
-            console.error("Ошибка отправки в Telegram:", error);
-            return false;
-          }
-        }
-
         // Обработчик формы расчета стоимости
         const costCalculatorForm = document.getElementById("costCalculatorForm");
 if (costCalculatorForm) {
