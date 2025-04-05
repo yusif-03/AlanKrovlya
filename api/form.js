@@ -2,12 +2,11 @@
 const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
-  // Set CORS headers
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle OPTIONS request for CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -17,32 +16,54 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { name, phone, service, message } = req.body;
+    // Читаем JSON тело вручную (важно для Vercel)
+    let body = '';
+    await new Promise((resolve) => {
+      req.on('data', (chunk) => {
+        body += chunk.toString();
+      });
+      req.on('end', resolve);
+    });
+
+    const data = JSON.parse(body);
+    const { name, phone, service, message, time, source } = data;
 
     if (!name || !phone) {
       return res.status(400).json({ error: 'Name and phone are required' });
     }
 
-    const BOT_TOKEN = process.env.BOT_TOKEN || 'your_default_bot_token';
-    const CHAT_ID = process.env.CHAT_ID || 'your_default_chat_id';
+    const BOT_TOKEN = process.env.BOT_TOKEN;
+    const CHAT_ID = process.env.CHAT_ID;
 
-    const telegramMessage = `
-📢 <b>Новая заявка с сайта</b>
-      
-▫️ <b>Имя:</b> ${name}
-▫️ <b>Телефон:</b> ${phone}
-${service ? `▫️ <b>Услуга:</b> ${service}\n` : ''}
-${message ? `▫️ <b>Сообщение:</b>\n${message}\n` : ''}
-⏱ <i>${new Date().toLocaleString()}</i>
-    `;
+    if (!BOT_TOKEN || !CHAT_ID) {
+      throw new Error('Telegram credentials not found');
+    }
 
+    // Формируем сообщение
+    let telegramMessage = `📢 <b>Новая заявка с сайта</b>\n\n`;
+
+    if (source === 'callback') {
+      telegramMessage += `📞 <b>Заказ обратного звонка</b>\n`;
+      telegramMessage += `▫️ <b>Имя:</b> ${name}\n`;
+      telegramMessage += `▫️ <b>Телефон:</b> ${phone}\n`;
+      if (time) telegramMessage += `▫️ <b>Время звонка:</b> ${time}\n`;
+    } else {
+      telegramMessage += `▫️ <b>Имя:</b> ${name}\n`;
+      telegramMessage += `▫️ <b>Телефон:</b> ${phone}\n`;
+      if (service) telegramMessage += `▫️ <b>Услуга:</b> ${service}\n`;
+      if (message) telegramMessage += `▫️ <b>Сообщение:</b>\n${message}\n`;
+    }
+
+    telegramMessage += `⏱ <i>${new Date().toLocaleString()}</i>`;
+
+    // Отправка в Telegram
     const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: CHAT_ID,
         text: telegramMessage,
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
       }),
     });
 
@@ -53,7 +74,7 @@ ${message ? `▫️ <b>Сообщение:</b>\n${message}\n` : ''}
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Ошибка обработки формы:', error);
     res.status(500).json({ error: error.message });
   }
 };
