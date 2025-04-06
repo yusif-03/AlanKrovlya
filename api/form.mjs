@@ -1,8 +1,6 @@
-// First install node-fetch: npm install node-fetch
 import fetch from 'node-fetch';
 
-module.exports = async (req, res) => {
-  // CORS
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -16,7 +14,6 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Читаем JSON тело вручную (важно для Vercel)
     let body = '';
     await new Promise((resolve) => {
       req.on('data', (chunk) => {
@@ -39,7 +36,6 @@ module.exports = async (req, res) => {
       throw new Error('Telegram credentials not found');
     }
 
-    // Формируем сообщение
     let telegramMessage = `📢 <b>Новая заявка с сайта</b>\n\n`;
 
     if (source === 'callback') {
@@ -56,7 +52,6 @@ module.exports = async (req, res) => {
 
     telegramMessage += `⏱ <i>${new Date().toLocaleString()}</i>`;
 
-    // Отправка в Telegram
     const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,4 +72,4 @@ module.exports = async (req, res) => {
     console.error('Ошибка обработки формы:', error);
     res.status(500).json({ error: error.message });
   }
-};
+}
