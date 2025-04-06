@@ -5,14 +5,20 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   try {
-    // Считываем тело запроса вручную (важно для Vercel)
     let body = '';
     await new Promise((resolve) => {
-      req.on('data', chunk => (body += chunk.toString()));
+      req.on('data', (chunk) => {
+        body += chunk.toString();
+      });
       req.on('end', resolve);
     });
 
@@ -20,18 +26,13 @@ export default async function handler(req, res) {
     const { name, phone, service, message, time, source } = data;
 
     if (!name || !phone) {
-      return res.status(400).json({ error: 'Имя и телефон обязательны' });
+      return res.status(400).json({ error: 'Name and phone are required' });
     }
 
-    const BOT_TOKEN = process.env.BOT_TOKEN;
-    const CHAT_ID = process.env.CHAT_ID;
+    // ❗ Подставляем напрямую токен и chat_id (или используй через process.env)
+    const BOT_TOKEN = '7598218261:AAGFAcVAEHuCq5lXHEKFTzpfgyFjMVWS5G0';
+    const CHAT_ID = '7373169686';
 
-    if (!BOT_TOKEN || !CHAT_ID) {
-      console.error('❌ BOT_TOKEN или CHAT_ID не установлены');
-      return res.status(500).json({ error: 'Telegram credentials not set' });
-    }
-
-    // Формируем сообщение
     let telegramMessage = `📢 <b>Новая заявка с сайта</b>\n\n`;
 
     if (source === 'callback') {
@@ -48,8 +49,9 @@ export default async function handler(req, res) {
 
     telegramMessage += `⏱ <i>${new Date().toLocaleString()}</i>`;
 
-    // Отправляем в Telegram
-    const telegramRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -59,15 +61,16 @@ export default async function handler(req, res) {
       }),
     });
 
-    if (!telegramRes.ok) {
-      const errorData = await telegramRes.json();
-      console.error('❌ Telegram API error:', errorData);
-      throw new Error(errorData.description || 'Telegram API error');
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('Telegram Error:', result);
+      throw new Error(result.description || 'Telegram API error');
     }
 
     res.status(200).json({ success: true });
-  } catch (err) {
-    console.error('❌ Ошибка обработки формы:', err);
-    res.status(500).json({ error: err.message || 'Server error' });
+  } catch (error) {
+    console.error('Ошибка обработки формы:', error);
+    res.status(500).json({ error: error.message });
   }
 }
