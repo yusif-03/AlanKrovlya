@@ -291,6 +291,10 @@
             >
           </nav>
           <div class="flex items-center space-x-4">
+            <!-- Бургер-меню для мобильных -->
+<button id="burgerBtn" class="md:hidden text-white text-3xl">
+  <i class="ri-menu-line"></i>
+</button>
             <a href="tel:+79271661433" class="text-white font-medium"
               >+7 (927) 166-14-33</a
             >
@@ -1440,6 +1444,31 @@ if (contactForm) {
           }
         });
       });
+      // Бургер-меню
+const burgerBtn = document.getElementById("burgerBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+const mobileCallbackBtn = document.getElementById("mobileCallbackBtn");
+
+burgerBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("hidden");
+  document.body.style.overflow = mobileMenu.classList.contains("hidden") ? "" : "hidden";
+});
+
+// Закрыть меню при клике на ссылку
+document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+  link.addEventListener("click", () => {
+    mobileMenu.classList.add("hidden");
+    document.body.style.overflow = "";
+  });
+});
+
+// Открытие модалки обратного звонка из мобильного меню
+mobileCallbackBtn.addEventListener("click", () => {
+  mobileMenu.classList.add("hidden");
+  callbackModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+});
+
     </script>
   </body>
 </html>
