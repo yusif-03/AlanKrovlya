@@ -228,86 +228,67 @@
     </div>
 
     <!-- Хедер -->
-    <header class="fixed top-0 left-0 right-0 bg-blue-950 shadow-md z-50">
-      <!-- Мобильное меню -->
-<div id="mobileMenu" class="fixed inset-0 bg-blue-950 z-40 hidden flex-col px-6 pt-24 pb-8 text-white">
-  <nav class="flex flex-col space-y-6 text-xl font-medium">
-    <a href="#home" class="mobile-nav-link">Главная</a>
-    <a href="#about" class="mobile-nav-link">О компании</a>
-    <a href="#services" class="mobile-nav-link">Услуги</a>
-    <a href="#testimonials" class="mobile-nav-link">Отзывы</a>
-    <a href="#contacts" class="mobile-nav-link">Контакты</a>
-  </nav>
-  <div class="mt-8">
-    <a href="tel:+79271661433" class="block text-lg font-semibold mb-4">+7 (927) 166-14-33</a>
-    <button id="mobileCallbackBtn" class="w-full bg-primary text-blue-950 py-3 rounded-lg hover:bg-primary/90 font-semibold">
-      Заказать звонок
-    </button>
+   <header class="fixed top-0 left-0 right-0 bg-blue-950 shadow-md z-50">
+  <!-- Мобильное меню -->
+  <div id="mobileMenu" class="fixed inset-0 bg-blue-950 z-40 hidden flex-col px-6 pt-24 pb-8 text-white">
+    <nav class="flex flex-col space-y-6 text-xl font-medium">
+      <a href="#home" class="mobile-nav-link">Главная</a>
+      <a href="#about" class="mobile-nav-link">О компании</a>
+      <a href="#services" class="mobile-nav-link">Услуги</a>
+      <a href="#testimonials" class="mobile-nav-link">Отзывы</a>
+      <a href="#contacts" class="mobile-nav-link">Контакты</a>
+    </nav>
+    <div class="mt-8">
+      <a href="tel:+79271661433" class="block text-lg font-semibold mb-4">+7 (927) 166-14-33</a>
+      <button id="mobileCallbackBtn" class="w-full bg-primary text-blue-950 py-3 rounded-lg hover:bg-primary/90 font-semibold">
+        Заказать звонок
+      </button>
+    </div>
   </div>
-</div>
 
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-20">
-          <div class="flex items-center">
-            <div
-              class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center"
-            >
-              <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
-            </div>
-            <a href="#home" class="text-3xl font-['Pacifico'] text-white"
-              >Алан-Кровля</a
-            >
-          </div>
-          <nav class="hidden md:flex space-x-8">
-            <a
-              href="#home"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="home"
-              >Главная</a
-            >
-            <a
-              href="#about"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="about"
-              >О компании</a
-            >
-            <a
-              href="#services"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="services"
-              >Услуги</a
-            >
-            <a
-              href="#testimonials"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="testimonials"
-              >Отзывы</a
-            >
-            <a
-              href="#contacts"
-              class="nav-link text-gray-200 hover:text-primary pb-1"
-              data-section="contacts"
-              >Контакты</a
-            >
-          </nav>
-          <div class="flex items-center space-x-4">
-            <!-- Бургер-меню для мобильных -->
-<button id="burgerBtn" class="md:hidden text-white text-3xl">
-  <i class="ri-menu-line"></i>
-</button>
-            <a href="tel:+79271661433" class="text-white font-medium"
-              >+7 (927) 166-14-33</a
-            >
-            <button
-              id="headerCallbackBtn"
-              class="bg-primary text-blue-950 px-4 py-2 !rounded-button hover:bg-primary/90 whitespace-nowrap font-semibold"
-            >
-              Заказать звонок
-            </button>
-          </div>
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-20">
+      <!-- Лого -->
+      <div class="flex items-center">
+        <div class="w-12 h-12 mr-2 bg-primary rounded-full flex items-center justify-center">
+          <i class="ri-home-roof-fill text-blue-950 text-2xl"></i>
         </div>
+        <a href="#home" class="text-3xl font-['Pacifico'] text-white">Алан-Кровля</a>
       </div>
-    </header>
+
+      <!-- Навигация -->
+      <nav class="hidden md:flex space-x-8">
+        <a href="#home" class="nav-link text-gray-200 hover:text-primary pb-1" data-section="home">Главная</a>
+        <a href="#about" class="nav-link text-gray-200 hover:text-primary pb-1" data-section="about">О компании</a>
+        <a href="#services" class="nav-link text-gray-200 hover:text-primary pb-1" data-section="services">Услуги</a>
+        <a href="#testimonials" class="nav-link text-gray-200 hover:text-primary pb-1" data-section="testimonials">Отзывы</a>
+        <a href="#contacts" class="nav-link text-gray-200 hover:text-primary pb-1" data-section="contacts">Контакты</a>
+      </nav>
+
+      <!-- Правая часть: бургер, телефон и кнопка -->
+      <div class="flex items-center space-x-4">
+        <!-- Бургер-меню для мобилок -->
+        <button id="burgerBtn" class="md:hidden text-white text-3xl">
+          <i class="ri-menu-line"></i>
+        </button>
+
+        <!-- Телефон (только на десктопе) -->
+        <a href="tel:+79271661433" class="hidden md:inline text-white font-medium">
+          +7 (927) 166-14-33
+        </a>
+
+        <!-- Кнопка -->
+        <button
+          id="headerCallbackBtn"
+          class="hidden md:inline bg-primary text-blue-950 px-4 py-2 rounded-button hover:bg-primary/90 font-semibold text-sm md:text-base"
+        >
+          Заказать звонок
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
 
     <!-- Основной контент -->
     <main class="pt-20">
