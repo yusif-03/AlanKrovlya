@@ -1,20 +1,8 @@
 {
   "routes": [
-    {
-      "src": "/api/form",
-      "dest": "api/form.mjs"
-    },
-    {
-      "src": "/sitemap.xml",
-      "dest": "/public/sitemap.xml"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "/public/robots.txt"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/api/form", "dest": "api/form.mjs" },
+    { "src": "/sitemap.xml", "dest": "/public/sitemap.xml" },
+    { "src": "/robots.txt", "dest": "/public/robots.txt" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
